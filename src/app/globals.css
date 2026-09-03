@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --color-cream: #faf3e0;
+  --color-cream-dim: #f1e8d0;
+  --color-ink: #201c16;
+  --color-red: #c1392b;
+  --color-red-dark: #9c2f24;
+  --color-line: rgba(32, 28, 22, 0.14);
+
+  --font-display: var(--font-archivo-black), "Arial Black", sans-serif;
+  --font-accent: var(--font-instrument-serif), Georgia, serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+}
+
+@theme inline {
+  --color-cream: var(--color-cream);
+  --color-cream-dim: var(--color-cream-dim);
+  --color-ink: var(--color-ink);
+  --color-red: var(--color-red);
+  --color-red-dark: var(--color-red-dark);
+  --color-line: var(--color-line);
+  --font-display: var(--font-display);
+  --font-accent: var(--font-accent);
+  --font-body: var(--font-body);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-cream);
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.text-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+}
+
+.text-accent {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
