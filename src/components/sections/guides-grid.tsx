@@ -11,7 +11,7 @@ export function GuidesGrid() {
         </h2>
         <p className="mt-4 max-w-xl text-base text-[var(--color-ink)]/70 sm:text-lg">
           Bite-sized guides to help you get more out of AI, from setup to
-          workflows you&apos;ll actually keep using.
+          workflows you&apos;ll actually keep using. Grab whatever looks fun.
         </p>
         <div className="mt-10">
           {guides.map((guide) => (

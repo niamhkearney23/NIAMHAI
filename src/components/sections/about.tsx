@@ -14,15 +14,16 @@ export function About() {
           </span>
         </h2>
         <p className="mt-8 text-lg leading-relaxed text-[var(--color-ink)]/85 sm:text-xl">
-          I&apos;m not a developer and I&apos;m not an AI researcher. I&apos;m someone who
-          spends an unreasonable amount of time testing these tools inside
-          real work — inboxes, calendars, decisions, the boring stuff — and
-          writing down what actually held up.
+          I&apos;m not a developer and I&apos;m not an AI researcher — I&apos;m just
+          genuinely obsessed with these tools. I spend an unreasonable amount
+          of time testing them inside real work — inboxes, calendars,
+          decisions, the boring stuff — and writing down what actually held
+          up.
         </p>
         <p className="mt-4 text-lg leading-relaxed text-[var(--color-ink)]/85 sm:text-xl">
-          No hype, no &quot;AI will change everything&quot; — just the setup steps, the
-          exact prompts, and the guardrails, so you can use the same thing
-          this afternoon.
+          No hype, no &quot;AI will change everything&quot; speeches — just the setup
+          steps, the exact prompts, and the guardrails, so you can steal the
+          same thing and use it this afternoon.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           {tools.map((tool) => (
