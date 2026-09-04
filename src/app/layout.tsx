@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { CommandPalette } from "@/components/ui/command-palette";
+import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/lib/site";
 
 const archivoBlack = Archivo_Black({
@@ -59,6 +60,7 @@ export default function RootLayout({
         <main>{children}</main>
         <SiteFooter />
         <CommandPalette />
+        <Analytics />
       </body>
     </html>
   );

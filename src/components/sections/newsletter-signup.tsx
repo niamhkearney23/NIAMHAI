@@ -2,14 +2,27 @@
 
 import { useState } from "react";
 
+type Status = "idle" | "submitting" | "success" | "error";
+
 export function NewsletterSignup() {
   const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email.includes("@")) return;
-    setSubmitted(true);
+
+    setStatus("submitting");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      setStatus(res.ok ? "success" : "error");
+    } catch {
+      setStatus("error");
+    }
   }
 
   return (
@@ -19,7 +32,7 @@ export function NewsletterSignup() {
         Once a week I&apos;ll send you the stuff that was actually worth keeping.
       </p>
 
-      {submitted ? (
+      {status === "success" ? (
         <p className="text-mono mt-6 text-sm font-semibold uppercase tracking-wide text-[var(--color-accent)]">
           You&apos;re officially in my AI rabbit hole.
         </p>
@@ -35,12 +48,20 @@ export function NewsletterSignup() {
           />
           <button
             type="submit"
-            className="text-mono inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-accent)] px-6 py-3 text-xs font-bold uppercase tracking-wide text-[var(--color-cream)] transition-transform duration-150 hover:-translate-y-0.5"
+            disabled={status === "submitting"}
+            className="text-mono inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-accent)] px-6 py-3 text-xs font-bold uppercase tracking-wide text-[var(--color-cream)] transition-transform duration-150 hover:-translate-y-0.5 disabled:opacity-60"
           >
-            Send me the good stuff →
+            {status === "submitting" ? "Sending…" : "Send me the good stuff →"}
           </button>
         </form>
       )}
+
+      {status === "error" && (
+        <p className="text-mono mt-3 text-xs text-[var(--color-ink)]/50">
+          Couldn&apos;t save that just now — mind trying again in a bit?
+        </p>
+      )}
+
       <p className="text-mono mt-4 text-xs text-[var(--color-ink)]/45">
         No daily &quot;AI NEWS 🚨&quot;. Promise.
       </p>

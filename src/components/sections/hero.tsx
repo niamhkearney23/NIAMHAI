@@ -59,6 +59,9 @@ export function Hero() {
   const [testingTool, setTestingTool] = useState(testing[0]);
 
   useEffect(() => {
+    // Randomize only after mount — doing it during render would make the
+    // server-rendered HTML and the client's first render disagree.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTestingTool(testing[Math.floor(Math.random() * testing.length)]);
   }, []);
 
