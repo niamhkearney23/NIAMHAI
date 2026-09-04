@@ -1,39 +1,28 @@
-const tools = ["ChatGPT", "Claude", "Gemini", "Perplexity", "n8n", "Zapier"];
-
 export function About() {
   return (
-    <section
-      id="about"
-      className="border-b border-[var(--color-line)] px-5 py-16 sm:px-8 sm:py-24"
-    >
-      <div className="mx-auto max-w-3xl text-center">
-        <h2 className="text-display text-4xl sm:text-6xl">
-          Making AI useful,{" "}
-          <span className="text-accent text-[1.1em] normal-case">
-            not intimidating.
-          </span>
+    <section id="about" className="border-b border-[var(--color-line)] px-5 py-16 sm:px-8 sm:py-24">
+      <div className="mx-auto max-w-2xl">
+        <p className="text-mono text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-accent)]">
+          A side note, not a mission statement
+        </p>
+        <h2 className="text-display mt-4 text-4xl sm:text-6xl">
+          I&apos;m not an AI expert.
+          <br />
+          <span className="text-accent-serif normal-case">Which is kind of the point.</span>
         </h2>
-        <p className="mt-8 text-lg leading-relaxed text-[var(--color-ink)]/85 sm:text-xl">
-          I&apos;m not a developer and I&apos;m not an AI researcher — I&apos;m just
-          genuinely obsessed with these tools. I spend an unreasonable amount
-          of time testing them inside real work — inboxes, calendars,
-          decisions, the boring stuff — and writing down what actually held
-          up.
-        </p>
-        <p className="mt-4 text-lg leading-relaxed text-[var(--color-ink)]/85 sm:text-xl">
-          No hype, no &quot;AI will change everything&quot; speeches — just the setup
-          steps, the exact prompts, and the guardrails, so you can steal the
-          same thing and use it this afternoon.
-        </p>
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
-          {tools.map((tool) => (
-            <span
-              key={tool}
-              className="rounded-full border border-[var(--color-ink)]/15 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--color-ink)]/70"
-            >
-              {tool}
-            </span>
-          ))}
+        <div className="mt-8 space-y-5 text-lg leading-relaxed text-[var(--color-ink)]/80">
+          <p>
+            I&apos;m someone with too many tabs open who started using these tools for actual
+            work. Not a developer. Not an AI researcher.
+          </p>
+          <p>I test things. I break things. I keep what works.</p>
+          <p>Then I put it here.</p>
+        </div>
+        <div className="mt-8 rounded-lg border-l-4 border-[var(--color-accent)] bg-[var(--color-paper)] px-6 py-5">
+          <p className="text-base leading-relaxed text-[var(--color-ink)]/85">
+            No 47-minute YouTube tutorials. No &quot;10 AI tools that will CHANGE YOUR LIFE.&quot;
+            No pretending a chatbot is sentient. Just things you can steal and use today.
+          </p>
         </div>
       </div>
     </section>
