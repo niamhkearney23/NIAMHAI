@@ -1,8 +1,5 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/brand/wordmark";
-import { nav } from "@/lib/site";
-import { RandomButton } from "@/components/layout/random-button";
-import { MobileMenu } from "@/components/layout/mobile-menu";
 
 export function SiteHeader() {
   return (
@@ -11,22 +8,14 @@ export function SiteHeader() {
         <Link href="/" aria-label="N1AMH AI home">
           <Wordmark tone="cream" />
         </Link>
-        <nav className="hidden items-center gap-7 sm:flex">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="underline-grow text-xs font-bold uppercase tracking-wide"
-            >
-              {item.label}
-            </Link>
-          ))}
-          <RandomButton />
-          <span className="text-mono hidden items-center gap-1 rounded border border-[var(--color-cream)]/20 px-2 py-1 text-[10px] text-[var(--color-cream)]/50 lg:flex">
-            ⌘K
-          </span>
+        <nav className="flex items-center gap-6">
+          <a href="#guides" className="underline-grow text-xs font-bold uppercase tracking-wide">
+            Guides
+          </a>
+          <a href="#about" className="underline-grow text-xs font-bold uppercase tracking-wide">
+            About
+          </a>
         </nav>
-        <MobileMenu />
       </div>
     </header>
   );

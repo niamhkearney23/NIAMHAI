@@ -43,7 +43,7 @@ export default async function GuidePage({
       <div className="px-5 py-14 sm:px-8 sm:py-20">
         <div className="mx-auto max-w-3xl">
           <Link
-            href="/guides"
+            href="/#guides"
             className="text-mono text-xs font-bold uppercase tracking-wide text-[var(--color-accent)] hover:underline"
           >
             ← All guides

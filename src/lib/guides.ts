@@ -17,16 +17,6 @@ export type Category =
 
 export type Difficulty = "EASY" | "MEDIUM" | "ADVANCED";
 
-export type Intent =
-  | "save-time"
-  | "sort-life"
-  | "research"
-  | "write-better"
-  | "automate"
-  | "build"
-  | "decide"
-  | "unsure";
-
 export type Guide = {
   slug: string;
   title: string;
@@ -37,8 +27,6 @@ export type Guide = {
   time: string;
   setupTime?: string;
   difficulty: Difficulty;
-  intents: Intent[];
-  stealLine: string;
   blocks: GuideBlock[];
 };
 
@@ -54,8 +42,6 @@ export const guides: Guide[] = [
     time: "3 min read",
     setupTime: "5 min setup",
     difficulty: "EASY",
-    intents: ["unsure", "save-time"],
-    stealLine: "Steal the exact custom-instructions block",
     blocks: [
       {
         type: "text",
@@ -115,8 +101,6 @@ export const guides: Guide[] = [
     time: "4 min read",
     setupTime: "2 min setup",
     difficulty: "EASY",
-    intents: ["save-time", "sort-life"],
-    stealLine: "Steal the sorting prompt",
     blocks: [
       {
         type: "text",
@@ -165,8 +149,6 @@ export const guides: Guide[] = [
     time: "5 min read",
     setupTime: "10 min setup",
     difficulty: "MEDIUM",
-    intents: ["sort-life", "automate"],
-    stealLine: "Steal the morning-brief prompt",
     blocks: [
       {
         type: "text",
@@ -214,8 +196,6 @@ export const guides: Guide[] = [
     time: "3 min read",
     setupTime: "1 min setup",
     difficulty: "EASY",
-    intents: ["decide", "write-better"],
-    stealLine: "Steal the disagreement prompt",
     blocks: [
       {
         type: "text",
@@ -262,8 +242,6 @@ export const guides: Guide[] = [
     tools: ["ChatGPT", "Claude"],
     time: "6 min read",
     difficulty: "EASY",
-    intents: ["write-better", "research"],
-    stealLine: "Steal all five",
     blocks: [
       {
         type: "text",
@@ -300,8 +278,6 @@ export const guides: Guide[] = [
     time: "5 min read",
     setupTime: "5 min setup",
     difficulty: "MEDIUM",
-    intents: ["automate", "build"],
-    stealLine: "Steal the pattern-finder prompt",
     blocks: [
       {
         type: "text",
@@ -344,8 +320,6 @@ export const guides: Guide[] = [
     time: "5 min read",
     setupTime: "20 min setup",
     difficulty: "ADVANCED",
-    intents: ["automate", "build"],
-    stealLine: "Steal the guardrail rule",
     blocks: [
       {
         type: "text",
@@ -389,22 +363,8 @@ export function relatedGuides(slug: string, count = 2) {
   if (!current) return [];
   return guides
     .filter((g) => g.slug !== slug)
-    .map((g) => ({
-      guide: g,
-      score: g.intents.filter((i) => current.intents.includes(i)).length + (g.category === current.category ? 1 : 0),
-    }))
+    .map((g) => ({ guide: g, score: g.category === current.category ? 1 : 0 }))
     .sort((a, b) => b.score - a.score)
     .slice(0, count)
     .map((r) => r.guide);
 }
-
-export const categories: Category[] = [
-  "CHATGPT",
-  "CLAUDE",
-  "PROMPTS",
-  "AUTOMATION",
-  "RESEARCH",
-  "WORK",
-  "LIFE",
-  "BUILDING",
-];

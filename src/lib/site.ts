@@ -6,14 +6,6 @@ export const site = {
   url: "https://n1amh.ai",
 };
 
-export const nav = [
-  { href: "/guides", label: "Guides" },
-  { href: "/prompts", label: "Prompts" },
-  { href: "/lab", label: "Lab" },
-  { href: "/start-here", label: "Start here" },
-  { href: "/about", label: "About" },
-];
-
 export const socials = [
   { label: "Instagram", href: "https://instagram.com" },
   { label: "LinkedIn", href: "https://linkedin.com" },

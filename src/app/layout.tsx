@@ -3,7 +3,6 @@ import { Archivo_Black, Instrument_Serif, Inter, JetBrains_Mono } from "next/fon
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { CommandPalette } from "@/components/ui/command-palette";
 import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/lib/site";
 
@@ -59,7 +58,6 @@ export default function RootLayout({
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />
-        <CommandPalette />
         <Analytics />
       </body>
     </html>

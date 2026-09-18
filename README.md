@@ -1,7 +1,7 @@
 # N1AMH AI
 
-Editorial digital-lab site for N1AMH AI — practical AI guides, prompts,
-and experiments, cream/near-black/charcoal with one signal-orange accent.
+One-page editorial site for N1AMH AI — practical AI guides, cream/
+near-black/charcoal with one signal-orange accent.
 
 ## Stack
 
@@ -13,17 +13,16 @@ and experiments, cream/near-black/charcoal with one signal-orange accent.
 
 ## Structure
 
-- `src/app/page.tsx` — homepage (hero, intent finder, steal-a-prompt,
-  guides preview, AI stack, lab preview, start here, about, newsletter)
-- `src/app/guides/page.tsx` — filterable/searchable guide index
-- `src/app/guides/[slug]/page.tsx` — individual guide pages
-- `src/app/prompts/`, `/lab/`, `/start-here/`, `/about/` — dedicated pages
-- `src/lib/guides.ts` — all guide content; add an object to the `guides`
-  array to publish a new guide (each has `blocks`: text/prompt/callout)
-- `src/lib/prompts.ts`, `experiments.ts`, `stack.ts`, `start-here.ts` —
-  content for the corresponding homepage sections and pages
-- `src/components/` — layout (header/footer/nav), sections, and shared
-  UI (command palette, copy-prompt, guide cards, etc.)
+- `src/app/page.tsx` — the whole homepage: hero, guides, AI stack,
+  about, newsletter
+- `src/app/guides/[slug]/page.tsx` — individual guide pages (each a
+  mini playbook: metadata, prompt blocks, callouts)
+- `src/lib/guides.ts` — all guide content; add an object to the
+  `guides` array to publish a new guide (each has `blocks`:
+  text/prompt/callout)
+- `src/lib/stack.ts` — content for the "things I'm actually using" section
+- `src/components/` — layout (header/footer), sections, and shared UI
+  (copy-prompt, guide cards, callouts, etc.)
 
 ## Newsletter signup
 
