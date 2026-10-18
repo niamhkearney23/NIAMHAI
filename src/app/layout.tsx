@@ -51,10 +51,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${archivoBlack.variable} ${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased`}
-      >
+    // The font variables go on <html>: globals.css builds --font-display and
+    // friends from them on :root, which can't see variables set on <body>.
+    <html
+      lang="en"
+      className={`${archivoBlack.variable} ${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+    >
+      <body className="antialiased">
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />
