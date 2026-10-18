@@ -1,0 +1,305 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @font-face{font-family:Cinzel;font-weight:400;src:url(fonts/cinzel-latin-400-normal.woff2)}
+  @font-face{font-family:Cinzel;font-weight:600;src:url(fonts/cinzel-latin-600-normal.woff2)}
+  @font-face{font-family:Cinzel;font-weight:700;src:url(fonts/cinzel-latin-700-normal.woff2)}
+  @font-face{font-family:Cormorant;font-weight:500;src:url(fonts/cormorant-garamond-latin-500-normal.woff2)}
+  @font-face{font-family:Cormorant;font-style:italic;font-weight:400;src:url(fonts/cormorant-garamond-latin-400-italic.woff2)}
+  @font-face{font-family:Cormorant;font-style:italic;font-weight:500;src:url(fonts/cormorant-garamond-latin-500-italic.woff2)}
+
+  /* ---- Brand palette: swap these for the Lawgistics colours ---- */
+  :root{
+    --ink:#06080d;        /* base / backgrounds */
+    --accent:#c9a45c;     /* primary brand accent */
+    --accent-hi:#f1dba6;  /* accent highlight */
+    --text:#f3efe6;       /* primary text */
+    --muted:#a59f94;      /* secondary text */
+  }
+  html,body{margin:0;background:#000}
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--ink);color:var(--text)}
+  canvas{position:absolute;inset:0}
+  .ov{position:absolute;inset:0;display:none}
+  .cin{font-family:Cinzel;font-weight:600;text-transform:uppercase;text-align:center;position:absolute;left:0;right:0;white-space:nowrap}
+  .ser{font-family:Cormorant;font-style:italic;font-weight:400;text-align:center;position:absolute;left:0;right:0;color:var(--muted)}
+  .sans{font-family:Inter;font-weight:500;text-transform:uppercase;position:absolute;white-space:nowrap}
+  .super{left:96px;font-size:28px;letter-spacing:.42em;color:var(--text)}
+  .coord{left:96px;font-size:22px;letter-spacing:.28em;color:var(--muted);font-weight:400}
+  .tick{position:absolute;left:96px;width:44px;height:2px;background:var(--accent)}
+  .gold{background:linear-gradient(100deg,#8a6a2f 0%,var(--accent) 30%,var(--accent-hi) 48%,#fff6dc 50%,var(--accent-hi) 52%,var(--accent) 70%,#8a6a2f 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+  .rule{position:absolute;left:50%;height:1px;background:var(--accent);transform:translateX(-50%)}
+  .lbl{font-family:Inter;font-weight:500;font-size:21px;letter-spacing:.42em;color:var(--accent);text-transform:uppercase}
+  .val{font-family:Cormorant;font-weight:500;font-size:52px;color:var(--text);margin-top:10px;letter-spacing:.01em}
+  #fade{position:absolute;inset:0;background:#000;pointer-events:none}
+</style></head>
+<body>
+<div id="stage">
+  <canvas id="cv" width="1080" height="1920"></canvas>
+
+  <!-- A: intro -->
+  <div class="ov" id="oA">
+    <div class="sans" id="aName" style="left:0;right:0;text-align:center;top:900px;font-size:44px;font-weight:600;letter-spacing:.6em;padding-left:.6em">Lawgistics</div>
+    <div class="rule" id="aRule" style="top:985px;width:0"></div>
+    <div class="sans" id="aPres" style="left:0;right:0;text-align:center;top:1012px;font-size:20px;letter-spacing:.7em;padding-left:.7em;color:var(--muted)">presents</div>
+  </div>
+
+  <!-- B: Singapore -->
+  <div class="ov" id="oB">
+    <div class="cin" id="bL1" style="top:470px;font-size:66px;letter-spacing:.18em">One kilometre</div>
+    <div class="cin" id="bL2" style="top:560px;font-size:66px;letter-spacing:.18em">of road.</div>
+    <div class="tick" id="bT" style="top:1478px"></div>
+    <div class="sans super" id="bS" style="top:1500px">Singapore</div>
+    <div class="sans coord" id="bC" style="top:1548px">1.2834° N &nbsp;·&nbsp; 103.8607° E</div>
+  </div>
+
+  <!-- C: Causeway -->
+  <div class="ov" id="oC">
+    <div class="cin" id="cL1" style="top:470px;font-size:66px;letter-spacing:.18em">Two legal</div>
+    <div class="cin" id="cL2" style="top:560px;font-size:66px;letter-spacing:.18em">worlds.</div>
+    <div class="tick" id="cT" style="top:1478px"></div>
+    <div class="sans super" id="cS" style="top:1500px">The Causeway</div>
+    <div class="sans coord" id="cC" style="top:1548px">1.4545° N &nbsp;·&nbsp; 103.7690° E</div>
+  </div>
+
+  <!-- D: Johor Bahru dawn -->
+  <div class="ov" id="oD">
+    <div class="cin" id="dL1" style="top:470px;font-size:74px;letter-spacing:.2em">One room.</div>
+    <div class="ser" id="dL2" style="top:580px;font-size:50px;color:var(--text)">full of the people you’ll build<br>a career with.</div>
+    <div class="tick" id="dT" style="top:1478px"></div>
+    <div class="sans super" id="dS" style="top:1500px">Johor Bahru</div>
+    <div class="sans coord" id="dC" style="top:1548px">1.4927° N &nbsp;·&nbsp; 103.7414° E</div>
+  </div>
+
+  <!-- E: Title -->
+  <div class="ov" id="oE">
+    <div id="eWrap" style="position:absolute;left:0;right:0;top:0;height:1920px">
+      <div class="cin" id="eL1" style="top:790px;font-size:52px;font-weight:400;letter-spacing:.62em;padding-left:.62em;color:var(--accent-hi)">Cross the</div>
+      <div class="cin gold" id="eL2" style="top:862px;font-size:128px;font-weight:700;letter-spacing:.06em;padding-left:.06em;line-height:1.1">Causeway</div>
+      <div class="rule" id="eRule" style="top:1040px;width:0"></div>
+      <div class="sans" id="eSub" style="left:0;right:0;text-align:center;top:1072px;font-size:22px;letter-spacing:.5em;padding-left:.5em;color:var(--muted)">Young Lawyers Meet · Johor Bahru</div>
+    </div>
+  </div>
+
+  <!-- F: Info -->
+  <div class="ov" id="oF">
+    <div class="sans" id="fBy" style="left:0;right:0;text-align:center;top:250px;font-size:22px;letter-spacing:.55em;padding-left:.55em;color:var(--muted)">Lawgistics presents</div>
+    <div class="cin" id="fL1" style="top:350px;font-size:44px;font-weight:400;letter-spacing:.6em;padding-left:.6em;color:var(--accent-hi)">Cross the</div>
+    <div class="cin gold" id="fL2" style="top:408px;font-size:112px;font-weight:700;letter-spacing:.06em;padding-left:.06em;line-height:1.1;background-position:30% 0">Causeway</div>
+    <div class="ser" id="fTag" style="top:575px;font-size:46px">A gathering of young lawyers in Johor Bahru</div>
+    <div class="rule" id="fRule" style="top:680px;width:0"></div>
+    <div id="fRows" style="position:absolute;left:0;right:0;top:760px;text-align:center">
+      <div class="row"><div class="lbl">Date</div><div class="val">[Date]</div></div>
+      <div class="row" style="margin-top:56px"><div class="lbl">Venue</div><div class="val">[Venue], Johor Bahru</div></div>
+      <div class="row" style="margin-top:56px"><div class="lbl">Transport</div><div class="val">Complimentary coach from Singapore</div><div class="ser" style="position:static;font-size:36px;margin-top:4px">[Pickup point] · [Time]</div></div>
+    </div>
+    <div id="fCta" style="position:absolute;left:50%;top:1420px;transform:translateX(-50%);padding:34px 64px;border:2px solid var(--accent);font-family:Inter;font-weight:600;font-size:28px;letter-spacing:.42em;color:var(--accent-hi);white-space:nowrap;text-transform:uppercase">Register&nbsp; · &nbsp;[link]</div>
+    <div class="ser" id="fLim" style="top:1560px;font-size:38px">Seats on the coach are limited</div>
+  </div>
+
+  <div id="fade"></div>
+</div>
+
+<script>
+const W=1080,H=1920,cv=document.getElementById("cv"),X=cv.getContext("2d");
+const $=id=>document.getElementById(id);
+const css=getComputedStyle(document.documentElement);
+const ACC=css.getPropertyValue("--accent").trim(), ACCHI=css.getPropertyValue("--accent-hi").trim();
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const eo=x=>{x=clamp(x);return 1-Math.pow(1-x,3)};
+const es=x=>{x=clamp(x);return x*x*(3-2*x)};
+const io=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2};
+function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+function mk(w,h){const c=document.createElement("canvas");c.width=w;c.height=h;return c}
+function hexA(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`}
+
+// ---------- drawing primitives ----------
+function glow(c,x,y,r,col,a){const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,hexA(col,a));g.addColorStop(.25,hexA(col,a*.45));g.addColorStop(1,hexA(col,0));c.fillStyle=g;c.fillRect(x-r,y-r,2*r,2*r)}
+function flare(c,x,y,len,th,col,a){ // anamorphic streak
+  const g=c.createLinearGradient(x-len,0,x+len,0);g.addColorStop(0,hexA(col,0));g.addColorStop(.5,hexA(col,a));g.addColorStop(1,hexA(col,0));
+  c.fillStyle=g;c.fillRect(x-len,y-th/2,2*len,th);c.fillRect(x-len*.6,y-th*1.5,1.2*len,th*3*.35)}
+function bokeh(c,x,y,r,col,a){const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,hexA(col,a*.55));g.addColorStop(.78,hexA(col,a*.7));g.addColorStop(.93,hexA(col,a));g.addColorStop(1,hexA(col,0));c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,7);c.fill()}
+function vgrad(c,y0,y1,stops){const g=c.createLinearGradient(0,y0,0,y1);stops.forEach(([o,col])=>g.addColorStop(o,col));c.fillStyle=g;c.fillRect(0,y0,W,y1-y0)}
+// water reflection: mirror the band above the horizon into strips with a ripple offset
+function reflect(c,hy,hgt,t,amp,alpha){c.save();c.globalAlpha=alpha;
+  for(let i=0;i<hgt;i+=3){const k=i/hgt, off=Math.sin(i*.11+t*2.4)*amp*(.25+k)+Math.sin(i*.037-t*1.3)*amp*.6*k;
+    const sy=hy-i*.85-3; if(sy<0)break; c.drawImage(c.canvas,0,sy,W,3,off,hy+i,W,3)}
+  c.restore()}
+
+// ---------- prerendered skylines ----------
+function skyline(seed,{w=1600,h=900,minH,maxH,minW=40,maxW=120,col,lights=0,lw=4,lh=6,mbs=false,spires=.15}){
+  const r=rng(seed),c=mk(w,h),g=c.getContext("2d"),pts=[];g.fillStyle=col;
+  let x=-20;const B=[];
+  while(x<w){const bw=minW+r()*(maxW-minW),bh=minH+Math.pow(r(),1.6)*(maxH-minH);B.push([x,h-bh,bw,bh]);x+=bw+(r()<.3?r()*30:2)}
+  if(mbs){const bx=w*.56;[[0,1],[110,1.02],[220,1.04]].forEach(([dx,s])=>{g.beginPath();g.moveTo(bx+dx,h);g.lineTo(bx+dx+6,h-430*s);g.lineTo(bx+dx+60,h-430*s);g.lineTo(bx+dx+70,h);g.fill()});
+    g.beginPath();g.moveTo(bx-30,h-440);g.quadraticCurveTo(bx+140,h-478,bx+330,h-462);g.lineTo(bx+334,h-440);g.quadraticCurveTo(bx+140,h-455,bx-30,h-424);g.fill();
+    for(let i=0;i<24;i++)pts.push([bx-20+i*14.5,h-440+Math.sin(i/23*Math.PI)*-20+6,1.6,"#ffe2b0",.95])}
+  B.forEach(([bx,by,bw,bh])=>{g.fillRect(bx,by,bw,bh); if(r()<spires&&bw<90){g.fillRect(bx+bw/2-2,by-60-r()*80,4,80)}
+    if(lights) for(let yy=by+14;yy<h-10;yy+=lh*2.4) for(let xx=bx+8;xx<bx+bw-8;xx+=lw*2.6) if(r()<lights){const warm=r()<.7;pts.push([xx,yy,null,warm?"#ffd59a":"#cfe6ff",.35+r()*.65])}});
+  pts.forEach(([px,py,rad,cc,a])=>{g.fillStyle=hexA(cc,a);if(rad){g.beginPath();g.arc(px,py,rad,0,7);g.fill()}else g.fillRect(px,py,lw,lh)});
+  return c}
+
+const R=rng(7);
+const BUF=mk(W,H),BC=BUF.getContext("2d");
+const SG={far:skyline(11,{minH:120,maxH:360,col:"#1a2a42"}),
+          mid:skyline(23,{minH:140,maxH:400,col:"#0d1626",lights:.11,mbs:true}),
+          near:skyline(37,{minH:200,maxH:500,minW:70,maxW:170,col:"#04070d",lights:.16,lw:6,lh:9,spires:.3})};
+const JB={far:skyline(51,{minH:80,maxH:260,col:"#7b5a78"}),
+          mid:skyline(63,{minH:90,maxH:300,col:"#4a3150",spires:.25}),
+          near:skyline(77,{minH:40,maxH:150,minW:60,maxW:160,col:"#1c1222"})};
+const STARS=[...Array(90)].map(()=>[R()*W,R()*900,.6+R()*1.4,R()*6]);
+const BOK=[...Array(11)].map(()=>[R()*W,1300+R()*620,40+R()*100,R()<.6?"#ffbf73":"#7fc7d9",.04+R()*.08,R()*6]);
+const DUST=[...Array(220)].map(()=>[R()*W,R()*H,.6+R()*2.2,R()*6,.2+R()*.8]);
+const BIRDS=[...Array(6)].map((_,i)=>[i*38+R()*30,R()*60,R()*6]);
+
+// ---------- scenes (local time l) ----------
+function sceneA(l){X.fillStyle="#000";X.fillRect(0,0,W,H);
+  X.globalCompositeOperation="lighter";
+  // volumetric beam from above
+  const bx=540+Math.sin(l*.4)*20;const g=X.createLinearGradient(0,0,0,1500);g.addColorStop(0,hexA(ACCHI,.10));g.addColorStop(1,hexA(ACCHI,0));
+  X.fillStyle=g;X.beginPath();X.moveTo(bx-80,-10);X.lineTo(bx+80,-10);X.lineTo(bx+520,1500);X.lineTo(bx-520,1500);X.fill();
+  glow(X,540,960,520,ACC,.10*es(l/1.2));
+  DUST.forEach(([x,y,r,p,a])=>{const yy=(y+l*14)%H,xx=x+Math.sin(l*.6+p)*16;const inBeam=Math.abs(xx-bx)<80+yy*.3;X.fillStyle=hexA(ACCHI,a*(inBeam?.55:.12));X.beginPath();X.arc(xx,yy,r,0,7);X.fill()});
+  X.globalCompositeOperation="source-over"}
+
+function drawSky(c,stops,hy){vgrad(c,0,hy,stops)}
+function sceneB(l){const hy=1180, cam=1+.085*io(l/4.8), pan=l*6;
+  const c=BC; c.setTransform(1,0,0,1,0,0);c.globalAlpha=1;c.globalCompositeOperation="source-over";
+  drawSky(c,[[0,"#03060d"],[.5,"#0a1830"],[.78,"#1f3550"],[.93,"#4a4660"],[1,"#7a5d63"]],hy);
+  STARS.forEach(([x,y,r,p])=>{c.fillStyle=`rgba(255,255,255,${.15+.25*(.5+.5*Math.sin(l*2+p))})`;c.fillRect(x,y,r,r)});
+  c.globalCompositeOperation="lighter";glow(c,620,hy,700,"#ff9a5a",.16);c.globalCompositeOperation="source-over";
+  c.globalAlpha=.85;c.drawImage(SG.far,-260-pan*.3,hy-900);c.globalAlpha=1;
+  c.drawImage(SG.mid,-300-pan*.6,hy-900);c.drawImage(SG.near,-200-pan,hy-900+60);
+  // haze over the horizon
+  const hz=c.createLinearGradient(0,hy-260,0,hy);hz.addColorStop(0,"rgba(90,100,130,0)");hz.addColorStop(1,"rgba(120,110,130,.28)");c.fillStyle=hz;c.fillRect(0,hy-260,W,260);
+  c.fillStyle="#04070d";c.fillRect(0,hy,W,H-hy);
+  reflect(c,hy,740,l,7,.55);
+  vgrad(c,hy,H,[[0,"rgba(6,12,24,.25)"],[1,"rgba(2,4,8,.9)"]]);
+  X.save();X.translate(540,1000);X.scale(cam,cam);X.translate(-540,-1000);X.drawImage(BUF,0,0);X.restore();
+  // foreground bokeh (closer, slower push = parallax)
+  X.globalCompositeOperation="lighter";
+  BOK.forEach(([x,y,r,col,a,p])=>bokeh(X,x+Math.sin(l*.3+p)*30-l*10,y+Math.cos(l*.25+p)*14,r*(1+.05*l),col,a*es(l/1.5)));
+  X.globalCompositeOperation="source-over"}
+
+function sceneC(l){
+  const f=950, vy=880, vx=540+Math.sin(l*.7)*8, camH=1.4, speed=24, travel=l*speed;
+  const P=(x,y,z)=>[vx+x*f/z, vy+(camH-y)*f/z];
+  vgrad(X,0,vy,[[0,"#050a16"],[.6,"#13213a"],[.88,"#3a3a58"],[1,"#7a5668"]]);
+  X.globalCompositeOperation="lighter";glow(X,vx,vy,520,"#ffb07a",.22);X.globalCompositeOperation="source-over";
+  // distant JB skyline on the horizon
+  X.globalAlpha=.9;X.drawImage(JB.mid,vx-260,vy-62,520,62*1.0);X.globalAlpha=1;
+  vgrad(X,vy,H,[[0,"#3a3346"],[.06,"#121a2a"],[1,"#03050a"]]);
+  // road surface
+  const road=(xa,xb,col)=>{const a=P(xa,0,600),b=P(xb,0,600),cc=P(xb,0,1.2),d=P(xa,0,1.2);X.fillStyle=col;X.beginPath();X.moveTo(...a);X.lineTo(...b);X.lineTo(...cc);X.lineTo(...d);X.fill()};
+  road(-9,9,"#0c0e13");
+  const rg=X.createLinearGradient(0,vy,0,H);rg.addColorStop(0,"rgba(255,170,110,.18)");rg.addColorStop(.3,"rgba(255,170,110,.04)");rg.addColorStop(1,"rgba(0,0,0,0)");X.fillStyle=rg;X.fillRect(0,vy,W,H-vy);
+  // edge lines + barriers
+  X.strokeStyle="rgba(235,230,220,.55)";[-7,7].forEach(x=>{X.lineWidth=3;X.beginPath();X.moveTo(...P(x,0,600));X.lineTo(...P(x,0,1.4));X.stroke()});
+  X.strokeStyle="rgba(200,205,215,.28)";[-9,9].forEach(x=>{X.lineWidth=2;X.beginPath();X.moveTo(...P(x,1,600));X.lineTo(...P(x,1,1.4));X.stroke()});
+  // lane dashes
+  X.fillStyle="rgba(240,236,226,.75)";
+  for(let k=0;k<60;k++){const z0=((k*10-travel)%600+600)%600+1.5,z1=z0+3.2;if(z0<1.6)continue;
+    [-3.5,0,3.5].forEach(x=>{if(x===0)return;const a=P(x-.08,0,z0),b=P(x+.08,0,z0),cc=P(x+.08,0,z1),d=P(x-.08,0,z1);X.beginPath();X.moveTo(...a);X.lineTo(...b);X.lineTo(...cc);X.lineTo(...d);X.fill()})}
+  X.strokeStyle="rgba(150,155,165,.35)";X.lineWidth=2;X.beginPath();X.moveTo(...P(0,.9,600));X.lineTo(...P(0,.9,1.4));X.stroke();
+  // long-exposure light trails
+  X.globalCompositeOperation="lighter";
+  const trail=(x,y,col,a,w)=>{X.strokeStyle=hexA(col,a);X.lineWidth=w;X.beginPath();X.moveTo(...P(x,y,500));X.lineTo(...P(x,y,3));X.stroke()};
+  trail(-2.2,.7,"#ff3b3b",.22,6);trail(-1.6,.7,"#ff3b3b",.22,6);trail(2.6,.7,"#fff1d6",.18,7);trail(4.4,.7,"#fff1d6",.14,7);
+  // street lamps (both sides, far to near)
+  const lamps=[];for(let k=0;k<22;k++){const z=((k*30-travel)%660+660)%660+2;lamps.push(z)}
+  lamps.sort((a,b)=>b-a).forEach(z=>{[-10,10].forEach(x=>{if(z<2.2)return;
+    const [gx,gy]=P(x,0,z),[tx,ty]=P(x,10,z),[hx,hy]=P(x*.82,10,z);
+    X.globalCompositeOperation="source-over";X.strokeStyle=`rgba(30,32,40,${clamp(1.5-z/400)})`;X.lineWidth=Math.max(1,.35*f/z);X.beginPath();X.moveTo(gx,gy);X.lineTo(tx,ty);X.lineTo(hx,hy);X.stroke();
+    X.globalCompositeOperation="lighter";const fade=clamp(1.2-z/600);
+    glow(X,hx,hy,Math.max(10,2.6*f/z),"#ffc27a",.85*fade);glow(X,hx,hy,Math.max(4,.6*f/z),"#fff3dc",.9*fade);
+    if(z<60)flare(X,hx,hy,Math.min(900,30*f/z),Math.max(2,.08*f/z),"#7fb6ff",.18*clamp(1-z/60));
+    const [px,py]=P(x*.55,0,z);glow(X,px,py,Math.max(6,3*f/z),"#ffb46a",.10*fade)})});
+  // cars ahead (tail lights) and oncoming (headlights)
+  [[-1.9,34+4*Math.sin(l*.8)],[-1.7,90+10*Math.sin(l*.5+1)],[-5.2,150]].forEach(([x,z])=>{[-.75,.75].forEach(d=>{const [cx,cy]=P(x+d,.8,z);glow(X,cx,cy,Math.max(8,1.4*f/z),"#ff2e2e",.9);glow(X,cx,cy,Math.max(2,.25*f/z),"#ffd0d0",.9)})});
+  for(let k=0;k<2;k++){const z=((300-((l+k*2.2)*48)%300)+300)%300+3;[-.8,.8].forEach(d=>{const [cx,cy]=P(4+d,.7,z);
+    glow(X,cx,cy,Math.max(10,3*f/z),"#fff4e0",.9*clamp(1.4-z/300));if(z<120)flare(X,cx,cy,Math.min(1200,60*f/z),Math.max(2,.12*f/z),"#8fc2ff",.35*clamp(1-z/120))})}
+  X.globalCompositeOperation="source-over";
+  // overhead haze + windscreen vignette
+  vgrad(X,0,500,[[0,"rgba(2,4,10,.65)"],[1,"rgba(2,4,10,0)"]])}
+
+function sceneD(l,still){
+  const hy=1200, rise=-30+es(l/4.8)*120, sx=650, sy=hy-rise, cam=1.10-.05*io(l/4.8), lift=l*8;
+  const c=BC; c.setTransform(1,0,0,1,0,0);c.globalAlpha=1;c.globalCompositeOperation="source-over";
+  drawSky(c,[[0,"#0b1430"],[.38,"#2a2f5c"],[.62,"#8b4f74"],[.82,"#e7866a"],[.95,"#ffc98f"],[1,"#ffe1b0"]],hy);
+  c.globalCompositeOperation="lighter";glow(c,sx,sy,900,"#ff9a5a",.35);glow(c,sx,sy,260,"#ffd9a0",.7);
+  c.fillStyle="#fff4dc";c.beginPath();c.arc(sx,sy,62,0,7);c.fill();glow(c,sx,sy,120,"#fffaf0",.9);c.globalCompositeOperation="source-over";
+  c.globalAlpha=.75;c.drawImage(JB.far,-250-l*3,hy-900);c.globalAlpha=1;
+  const hz=c.createLinearGradient(0,hy-200,0,hy);hz.addColorStop(0,"rgba(255,170,130,0)");hz.addColorStop(1,"rgba(255,170,130,.35)");c.fillStyle=hz;c.fillRect(0,hy-200,W,200);
+  c.drawImage(JB.mid,-320-l*6,hy-900+20);c.drawImage(JB.near,-200-l*10,hy-900+40);
+  // birds
+  BIRDS.forEach(([dx,dy,p],i)=>{const bx=120+dx+l*70,by=860+dy+Math.sin(l*2+p)*8,wf=Math.sin(l*9+p)*9;c.strokeStyle="rgba(30,18,30,.85)";c.lineWidth=3;c.beginPath();c.moveTo(bx-16,by-wf);c.quadraticCurveTo(bx-6,by-4,bx,by);c.quadraticCurveTo(bx+6,by-4,bx+16,by-wf);c.stroke()});
+  c.fillStyle="#2a1a2c";c.fillRect(0,hy,W,H);
+  reflect(c,hy,760,l,9,.6);
+  // sun glitter path
+  c.globalCompositeOperation="lighter";const r2=rng(5);
+  for(let i=0;i<160;i++){const yy=hy+6+Math.pow(r2(),1.4)*700,spread=20+(yy-hy)*.35,xx=sx+(r2()-.5)*2*spread,a=.5*(.5+.5*Math.sin(l*6+i));c.fillStyle=`rgba(255,220,160,${a*(1-(yy-hy)/760)})`;c.fillRect(xx,yy,10+r2()*30,2)}
+  c.globalCompositeOperation="source-over";
+  vgrad(c,hy,H,[[0,"rgba(40,20,40,.1)"],[1,"rgba(10,6,14,.85)"]]);
+  X.save();X.translate(540,1100);X.scale(cam,cam);X.translate(-540,-1100+lift);X.drawImage(BUF,0,0);X.restore();
+  // anamorphic flare + ghosts in screen space
+  const [fx,fy]=[540+(sx-540)*cam,1100+(sy-1100+lift)*cam];
+  X.globalCompositeOperation="lighter";
+  flare(X,fx,fy,1300,5,"#9cc8ff",.55);flare(X,fx,fy,700,14,"#ffd9a0",.18);
+  [[.4,40,"#7fb6ff",.12],[.8,22,"#ffd9a0",.14],[1.3,70,"#b28cff",.07],[1.7,30,"#7fe0c8",.08]].forEach(([k,r,col,a])=>{const gx=fx+(540-fx)*k*2,gy=fy+(960-fy)*k*2;bokeh(X,gx,gy,r,col,a)});
+  X.globalCompositeOperation="source-over"}
+
+let blurBG=null;
+function sceneE(l){X.fillStyle="#000";X.fillRect(0,0,W,H);X.globalCompositeOperation="lighter";
+  glow(X,540,930,700,ACC,.10+.10*Math.exp(-l*2));
+  DUST.forEach(([x,y,r,p,a])=>{const yy=(y-l*18+H)%H,xx=x+Math.sin(l*.5+p)*12;X.fillStyle=hexA(ACCHI,a*.22);X.beginPath();X.arc(xx,yy,r*.9,0,7);X.fill()});
+  const fl=Math.exp(-l*1.6);flare(X,540,930,1400*(.6+.4*fl),6,"#a9cfff",.75*fl+.12);flare(X,540,930,600,26,ACCHI,.25*fl);
+  X.globalCompositeOperation="source-over"}
+
+function sceneF(l){ if(!blurBG){const tmp=mk(W,H),t2=tmp.getContext("2d");const keep=X;
+    // render the dawn scene once, then cache a soft, darkened copy as the backdrop
+    sceneD.call(null,3.6);t2.drawImage(cv,0,0);blurBG=mk(W,H);const b=blurBG.getContext("2d");b.filter="blur(28px) saturate(1.1)";b.drawImage(tmp,-40,-40,W+80,H+80)}
+  const s=1.04+l*.006;X.save();X.translate(540,960);X.scale(s,s);X.translate(-540,-960);X.drawImage(blurBG,0,0);X.restore();
+  vgrad(X,0,H,[[0,"rgba(6,8,13,.86)"],[.5,"rgba(6,8,13,.78)"],[1,"rgba(6,8,13,.92)"]])}
+
+// ---------- timeline (75 BPM: beat = 0.8s) ----------
+const T={A:[0,3.2],B:[3.2,8.0],C:[8.0,12.8],D:[12.8,17.6],E:[17.6,22.4],F:[22.4,30.4]};
+window.DURATION=30.4;
+function cin(el,t,a,d=1.1,blur=14,rise=18){const p=eo((t-a)/d);el.style.opacity=p;el.style.filter=`blur(${(1-p)*blur}px)`;el.style.transform=`translateY(${(1-p)*rise}px)`}
+function tracking(el,t,a,base,extra,d=4){el.style.letterSpacing=(base+extra*(1-eo((t-a)/d)))+"em"}
+function sup(pfx,l){const p=eo((l-.6)/.8);$(pfx+"T").style.width=44*p+"px";cin($(pfx+"S"),l,.8,.9,6,0);cin($(pfx+"C"),l,1.1,.9,6,0)}
+
+function render(t){
+  const on=k=>t>=T[k][0]&&t<T[k][1];
+  ["A","B","C","D","E","F"].forEach(k=>$("o"+k).style.display=on(k)?"block":"none");
+  X.setTransform(1,0,0,1,0,0);X.globalAlpha=1;X.filter="none";X.globalCompositeOperation="source-over";
+
+  if(on("A")){const l=t;sceneA(l);cin($("aName"),l,.5,1.4,18,0);tracking($("aName"),l,.5,.6,.25,2.6);
+    $("aRule").style.width=180*eo((l-1.2)/1.2)+"px";cin($("aPres"),l,1.5,1,8,0)}
+  if(on("B")){const l=t-3.2;sceneB(l);cin($("bL1"),l,.5,1.3);cin($("bL2"),l,.9,1.3);tracking($("bL1"),l,.5,.18,.12);tracking($("bL2"),l,.9,.18,.12);sup("b",l)}
+  if(on("C")){const l=t-8.0;sceneC(l);cin($("cL1"),l,.5,1.3);cin($("cL2"),l,.9,1.3);tracking($("cL1"),l,.5,.18,.12);tracking($("cL2"),l,.9,.18,.12);sup("c",l)}
+  if(on("D")){const l=t-12.8;sceneD(l);cin($("dL1"),l,.5,1.3);tracking($("dL1"),l,.5,.2,.12);cin($("dL2"),l,1.3,1.4,10,10);sup("d",l)}
+  if(on("E")){const l=t-17.6;sceneE(l);
+    const s=1.06-.06*eo(l/4.8);$("eWrap").style.transform=`scale(${s})`;
+    cin($("eL2"),l,0,.9,22,0);cin($("eL1"),l,.5,1.2,10,0);tracking($("eL1"),l,.5,.62,.2,3);
+    $("eL2").style.backgroundPosition=`${100-clamp((l-.3)/2.2)*100}% 0`;
+    $("eRule").style.width=360*eo((l-1.2)/1.4)+"px";cin($("eSub"),l,1.8,1.2,8,0)}
+  if(on("F")){const l=t-22.4;sceneF(l);
+    ["fBy","fL1","fL2","fTag"].forEach((id,i)=>cin($(id),l,.3+i*.25,1.1,12,14));
+    $("fRule").style.width=160*eo((l-1.2)/1)+"px";
+    [...document.querySelectorAll("#fRows .row")].forEach((r,i)=>cin(r,l,1.5+i*.3,1,10,16));
+    cin($("fCta"),l,2.6,1,8,0);$("fCta").style.transform=`translateX(-50%) scale(${1+.012*Math.sin(l*Math.PI/.8)*(l>3.6)})`;
+    cin($("fLim"),l,3.0,1,8,0);
+    $("fL2").style.backgroundPosition=`${100-clamp((l-.6)/3)*100}% 0`}
+
+  // dips to black
+  let k=0;
+  k=Math.max(k,1-eo(t/.5));
+  [3.2,8.0,12.8].forEach(b=>{k=Math.max(k,1-Math.abs(t-b)/.42)});
+  if(t>16.9&&t<17.6)k=Math.max(k,clamp((t-16.9)/.35));
+  if(t>=17.6&&t<17.7)k=Math.max(k,1-(t-17.6)/.1);
+  k=Math.max(k,1-Math.abs(t-22.4)/.5);
+  if(t>29.4)k=Math.max(k,clamp((t-29.4)/1));
+  $("fade").style.opacity=clamp(k)}
+window.render=render;
+document.fonts.ready.then(()=>render(0));
+</script>
+</body></html>
