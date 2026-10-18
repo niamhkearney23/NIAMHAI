@@ -1,6 +1,8 @@
 import { services } from "@/lib/services";
+import { demos } from "@/lib/demos";
 import { site } from "@/lib/site";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { DemoCard } from "@/components/sections/demo-card";
 
 export function WorkWithMe() {
   return (
@@ -38,6 +40,26 @@ export function WorkWithMe() {
               </p>
             </div>
           ))}
+        </div>
+
+        <div id="demos" className="mt-16 scroll-mt-20 border-t border-[var(--color-line)] pt-12 sm:mt-20">
+          <p className="text-mono text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-accent)]">
+            Concept demos
+          </p>
+          <h3 className="text-display mt-3 text-3xl sm:text-4xl">
+            Things I&apos;ve built{" "}
+            <span className="text-accent-serif text-[1.05em] normal-case">with AI.</span>
+          </h3>
+          <p className="mt-4 max-w-xl text-base text-[var(--color-ink)]/70 sm:text-lg">
+            Not client work. Three small, working examples of what I can make for you: a
+            dashboard, an automation and a website. The businesses, people and numbers are made
+            up. Open one and click around.
+          </p>
+          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+            {demos.map((demo, index) => (
+              <DemoCard key={demo.slug} demo={demo} index={index} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
