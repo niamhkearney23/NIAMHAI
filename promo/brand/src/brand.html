@@ -1,0 +1,224 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @font-face{font-family:Newsreader;font-weight:500;src:url(fonts/newsreader-latin-500-normal.woff2)}
+  @font-face{font-family:Newsreader;font-weight:600;src:url(fonts/newsreader-latin-600-normal.woff2)}
+  @font-face{font-family:"Instrument Sans";font-weight:400;src:url(fonts/instrument-sans-latin-400-normal.woff2)}
+  @font-face{font-family:"Instrument Sans";font-weight:500;src:url(fonts/instrument-sans-latin-500-normal.woff2)}
+  @font-face{font-family:"IBM Plex Mono";font-weight:400;src:url(fonts/ibm-plex-mono-latin-400-normal.woff2)}
+  @font-face{font-family:"IBM Plex Mono";font-weight:500;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2)}
+
+  /* Lawgistics brand tokens */
+  :root{
+    --navy:#171B28; --cream:#F1EBDE; --peri:#A8C0EA; --steel:#46648F;
+    --surface-raised:#1E2333;            /* raised card on navy */
+    --line-on-navy:rgba(241,235,222,.16); /* 1px borders on navy */
+    --line-on-cream:rgba(23,27,40,.16);
+    --faint-on-navy:rgba(241,235,222,.48);
+    --faint-on-cream:rgba(23,27,40,.48);
+    --radius-md:14px;
+    --m:96px;                             /* outer margin */
+  }
+  html,body{margin:0;background:var(--navy)}
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--navy)}
+  .sc{position:absolute;inset:0;display:none}
+  .navy{background:var(--navy);color:var(--cream)}
+  .cream{background:var(--cream);color:var(--navy)}
+  .peri{background:var(--peri);color:var(--navy)}
+
+  .kicker{font-family:"IBM Plex Mono";font-weight:500;font-size:24px;letter-spacing:5px;text-transform:uppercase}
+  .navy .kicker{color:var(--peri)} .cream .kicker{color:var(--steel)} .peri .kicker{color:var(--navy)}
+  .hl{font-family:Newsreader;font-weight:500;letter-spacing:-.012em;line-height:1.06}
+  .ln{display:block;overflow:hidden;padding-bottom:.08em}
+  .ln>span{display:inline-block;will-change:transform}
+  .body{font-family:"Instrument Sans";font-weight:400}
+
+  /* vertically centred content block, left aligned on the margin */
+  .block{position:absolute;left:var(--m);right:var(--m);top:50%;transform:translateY(-50%)}
+
+  /* footer row */
+  .foot{position:absolute;left:var(--m);right:var(--m);bottom:0;height:150px;display:flex;align-items:center;justify-content:space-between}
+  .foot::before{content:"";position:absolute;left:0;right:0;top:0;height:1px}
+  .navy .foot::before,.photo .foot::before{background:var(--line-on-navy)}
+  .cream .foot::before{background:var(--line-on-cream)} .peri .foot::before{background:rgba(23,27,40,.22)}
+  .pg{font-family:"IBM Plex Mono";font-size:20px;letter-spacing:4px;text-transform:uppercase}
+  .navy .pg,.photo .pg{color:var(--faint-on-navy)} .cream .pg,.peri .pg{color:var(--faint-on-cream)}
+  .wm{font-family:Newsreader;font-weight:500;font-size:40px;letter-spacing:-.01em}
+  .navy .wm,.photo .wm{color:var(--cream)} .cream .wm,.peri .wm{color:var(--navy)}
+  .navy .wm i,.photo .wm i{color:var(--peri);font-style:normal} .cream .wm i,.peri .wm i{color:var(--steel);font-style:normal}
+
+  /* photo scenes: solid navy bands, picture window between */
+  .photo{background:var(--navy);color:var(--cream)}
+  .win{position:absolute;left:0;right:0;top:180px;height:1560px;overflow:hidden;background:var(--navy)}
+  .win img{position:absolute;left:0;top:-187px;width:1080px;height:1935px;filter:saturate(.86) contrast(1.04);will-change:transform}
+  .photo .kicker{position:absolute;left:var(--m);top:78px;color:var(--peri)}
+  .photo .foot{height:180px}
+
+  .card{background:var(--surface-raised);border:1px solid var(--line-on-navy);border-radius:var(--radius-md)}
+  .row{display:flex;align-items:baseline;padding:30px 40px;border-top:1px solid var(--line-on-navy)}
+  .row:first-child{border-top:0}
+  .row .lab{font-family:"IBM Plex Mono";font-size:22px;letter-spacing:4px;color:var(--faint-on-navy);width:230px;flex:none}
+  .row .v{font-family:"Instrument Sans";font-weight:500;font-size:38px;color:var(--cream)}
+
+  #fade{position:absolute;inset:0;background:var(--navy);pointer-events:none}
+</style></head>
+<body>
+<div id="stage">
+
+  <!-- 1 photo: pickup -->
+  <div class="sc photo" id="s1">
+    <div class="win"><img src="img/01-pickup.png"></div>
+    <div class="kicker">Pickup · Singapore</div>
+    <div class="foot"><span class="pg">01 / 10</span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <!-- 2 card navy -->
+  <div class="sc navy" id="s2">
+    <div class="block">
+      <div class="kicker k">The pickup</div>
+      <div class="hl" style="font-size:100px;margin-top:44px"><span class="ln"><span>We pick you up</span></span><span class="ln"><span>in Singapore.</span></span></div>
+      <div class="hl" style="font-size:100px;margin-top:28px"><span class="ln"><span>The coach does</span></span><span class="ln"><span>the rest.</span></span></div>
+    </div>
+    <div class="foot"><span class="pg">02 / 10</span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <!-- 3 photo: coach window -->
+  <div class="sc photo" id="s3">
+    <div class="win"><img src="img/02-coach.png"></div>
+    <div class="kicker">On the coach</div>
+    <div class="foot"><span class="pg">03 / 10</span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <!-- 4 photo: aerial causeway -->
+  <div class="sc photo" id="s4">
+    <div class="win"><img src="img/03-causeway.png"></div>
+    <div class="kicker">The Causeway</div>
+    <div class="foot"><span class="pg">04 / 10</span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <!-- 5 card cream -->
+  <div class="sc cream" id="s5">
+    <div class="block">
+      <div class="kicker k">The room</div>
+      <div class="hl" style="font-size:96px;margin-top:44px"><span class="ln"><span>Your peers are across</span></span><span class="ln"><span>the Causeway.</span></span></div>
+      <div class="hl" style="font-size:96px;margin-top:28px"><span class="ln"><span>So is your next</span></span><span class="ln"><span>referral.</span></span></div>
+    </div>
+    <div class="foot"><span class="pg">05 / 10</span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <!-- 6-8 photos: Johor Bahru -->
+  <div class="sc photo" id="s6">
+    <div class="win"><img src="img/04-group.png"></div>
+    <div class="kicker">Johor Bahru</div>
+    <div class="foot"><span class="pg">06 / 10</span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+  <div class="sc photo" id="s7">
+    <div class="win"><img src="img/05-handshake.png"></div>
+    <div class="kicker">Johor Bahru</div>
+    <div class="foot"><span class="pg">07 / 10</span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+  <div class="sc photo" id="s8">
+    <div class="win"><img src="img/06-panel.png"></div>
+    <div class="kicker">The panel</div>
+    <div class="foot"><span class="pg">08 / 10</span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <!-- 9 statement: periwinkle -->
+  <div class="sc peri" id="s9">
+    <div class="block">
+      <div class="kicker k">Young lawyers meet · Johor Bahru</div>
+      <div class="hl" style="font-size:168px;font-weight:600;margin-top:48px;letter-spacing:-.02em"><span class="ln"><span>Cross the</span></span><span class="ln"><span>Causeway.</span></span></div>
+    </div>
+    <div class="foot"><span class="pg">09 / 10</span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <!-- 10 details: navy -->
+  <div class="sc navy" id="s10">
+    <div class="block">
+      <div class="kicker k">The details</div>
+      <div class="hl" style="font-size:88px;margin-top:40px"><span class="ln"><span>Free coach from</span></span><span class="ln"><span>Singapore.</span></span></div>
+      <div class="card" id="dCard" style="margin-top:64px">
+        <div class="row"><span class="lab">DATE</span><span class="v">[Date]</span></div>
+        <div class="row"><span class="lab">VENUE</span><span class="v">[Venue], Johor Bahru</span></div>
+        <div class="row"><span class="lab">PICKUP</span><span class="v">[Pickup point], [Time]</span></div>
+        <div class="row"><span class="lab">REGISTER</span><span class="v">[Link]</span></div>
+      </div>
+      <div class="body" id="dNote" style="font-size:36px;margin-top:40px;color:var(--faint-on-navy)">Seats on the coach are limited.</div>
+    </div>
+    <div class="foot"><span class="pg">10 / 10</span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <!-- 11 end: cream, logo -->
+  <div class="sc cream" id="s11">
+    <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center">
+      <svg id="logo" width="220" height="220" viewBox="0 0 220 220">
+        <circle cx="110" cy="110" r="110" fill="#171B28"/>
+        <text x="86" y="152" text-anchor="middle" font-family="Newsreader" font-weight="600" font-size="148" fill="#F1EBDE">L</text>
+        <circle cx="146" cy="142" r="11" fill="#A8C0EA"/>
+      </svg>
+      <div class="wm" id="eWm" style="font-size:96px;margin-top:56px">Lawgistics<i>.</i></div>
+      <div class="body" id="eTag" style="font-size:38px;margin-top:22px;color:var(--navy)">Your own firm, with us behind you.</div>
+      <div class="kicker" id="eUrl" style="margin-top:56px;font-size:22px">lawgistics.my</div>
+    </div>
+  </div>
+
+  <div id="fade"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const eo=x=>{x=clamp(x);return 1-Math.pow(1-x,3)};
+const io=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2};
+const lin=x=>clamp(x);
+
+// 75 BPM: beat = 0.8s. Every cut lands on a beat.
+// [id, start, end, dissolveIn, kenBurns {s0,s1,x0,x1,y0,y1}]
+const SC=[
+  ["s1", 0.0, 4.0, false,{s0:1.04,s1:1.13,x0:0,x1:-10,y0:10,y1:-30}],
+  ["s2", 4.0, 7.2],
+  ["s3", 7.2,10.4, false,{s0:1.13,s1:1.04,x0:24,x1:-8,y0:0,y1:0}],
+  ["s4",10.4,13.6, true, {s0:1.00,s1:1.12,x0:0,x1:0,y0:40,y1:-50}],
+  ["s5",13.6,16.8],
+  ["s6",16.8,19.2, false,{s0:1.09,s1:1.02,x0:-30,x1:24,y0:0,y1:0}],
+  ["s7",19.2,21.6, true, {s0:1.16,s1:1.08,x0:0,x1:-14,y0:-10,y1:6}],
+  ["s8",21.6,24.0, true, {s0:1.00,s1:1.08,x0:0,x1:0,y0:0,y1:-34}],
+  ["s9",24.0,27.2],
+  ["s10",27.2,33.6],
+  ["s11",33.6,36.8],
+];
+window.DURATION=36.8;
+const XD=0.45; // dissolve length
+
+function lines(sc,t,a,st=.14,d=.8){[...$(sc).querySelectorAll(".hl .ln>span")].forEach((s,i)=>{const p=eo((t-a-i*st)/d);s.style.transform=`translateY(${(1-p)*108}%)`})}
+function fade(el,t,a,d=.6,dy=12){const p=eo((t-a)/d);el.style.opacity=p;el.style.transform=`translateY(${(1-p)*dy}px)`}
+
+function render(t){
+  SC.forEach(([id,a,b,dis,kb],k)=>{
+    const next=SC[k+1], tail=next&&next[3]?XD:0, el=$(id);
+    const vis=t>=a&&t<b+tail; el.style.display=vis?"block":"none"; if(!vis)return;
+    el.style.opacity=dis?eo((t-a)/XD):1;
+    const l=t-a, span=b+tail-a;
+    if(kb){const p=io(l/span), img=el.querySelector("img");
+      const s=kb.s0+(kb.s1-kb.s0)*p, x=kb.x0+(kb.x1-kb.x0)*p, y=kb.y0+(kb.y1-kb.y0)*p;
+      img.style.transform=`translate(${x}px,${y}px) scale(${s})`;
+      fade(el.querySelector(".kicker"),l,dis?.2:.35,.7,0)}
+  });
+  // cards
+  {const l=t-4.0;fade($("s2").querySelector(".k"),l,.15,.6,0);lines("s2",l,.3,.16)
+   const sp=[...$("s2").querySelectorAll(".ln>span")];[2,3].forEach(i=>{const p=eo((l-1.45-(i-2)*.16)/.8);sp[i].style.transform=`translateY(${(1-p)*108}%)`})}
+  {const l=t-13.6;fade($("s5").querySelector(".k"),l,.15,.6,0);lines("s5",l,.3,.16)
+   const sp=[...$("s5").querySelectorAll(".ln>span")];[2,3].forEach(i=>{const p=eo((l-1.45-(i-2)*.16)/.8);sp[i].style.transform=`translateY(${(1-p)*108}%)`})}
+  {const l=t-24.0;fade($("s9").querySelector(".k"),l,.5,.6,0);lines("s9",l,.12,.18,.9)}
+  {const l=t-27.2;fade($("s10").querySelector(".k"),l,.15,.6,0);lines("s10",l,.3,.16);
+   fade($("dCard"),l,1.0,.8,20);[...$("dCard").querySelectorAll(".row")].forEach((r,i)=>fade(r,l,1.25+i*.2,.6,10));fade($("dNote"),l,2.4,.7,0)}
+  {const l=t-33.6;const p=eo(l/.9);$("logo").style.opacity=p;$("logo").style.transform=`scale(${.94+.06*p})`;
+   fade($("eWm"),l,.4,.8,14);fade($("eTag"),l,.7,.8,14);fade($("eUrl"),l,1.0,.8,0)}
+
+  // fade from navy at the top, out to navy at the end
+  let k=1-eo(t/.6); if(t>36.0)k=Math.max(k,clamp((t-36.0)/.8));
+  $("fade").style.opacity=k}
+window.render=render;
+document.fonts.ready.then(()=>render(0));
+</script>
+</body></html>
