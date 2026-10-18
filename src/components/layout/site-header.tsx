@@ -9,15 +9,15 @@ export function SiteHeader() {
           <Wordmark tone="cream" />
         </Link>
         <nav className="flex items-center gap-6">
-          <a href="#guides" className="underline-grow text-xs font-bold uppercase tracking-wide">
+          <Link href="/#guides" className="underline-grow text-xs font-bold uppercase tracking-wide">
             Guides
-          </a>
-          <a href="#work-with-me" className="underline-grow text-xs font-bold uppercase tracking-wide">
+          </Link>
+          <Link href="/#work-with-me" className="underline-grow text-xs font-bold uppercase tracking-wide">
             Work
-          </a>
-          <a href="#about" className="underline-grow text-xs font-bold uppercase tracking-wide">
+          </Link>
+          <Link href="/#about" className="underline-grow text-xs font-bold uppercase tracking-wide">
             About
-          </a>
+          </Link>
         </nav>
       </div>
     </header>

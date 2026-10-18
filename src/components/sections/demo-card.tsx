@@ -3,46 +3,29 @@
 import { useEffect, useRef } from "react";
 import type { Demo } from "@/lib/demos";
 
-type Mode = "off" | "hover" | "in-view";
-
 export function DemoCard({ demo, index }: { demo: Demo; index: number }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const mode = useRef<Mode>("off");
+  const canPreview = useRef(false);
   const num = String(index + 1).padStart(2, "0");
 
-  // The preview only plays when it's wanted: on hover or keyboard focus where
-  // there's a mouse, and while on screen on touch devices. Nothing downloads
-  // until then (preload="none"), and it stays a still image for anyone who
-  // prefers reduced motion or has data saver on.
+  // The preview plays only while a mouse is over the card (or it has keyboard
+  // focus), so it never runs without the visitor asking. Touch screens,
+  // reduced motion and data saver just get the still image. Nothing is
+  // downloaded until the first play (preload="none").
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } })
       .connection;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || connection?.saveData) {
-      return;
-    }
-    if (window.matchMedia("(hover: hover)").matches) {
-      mode.current = "hover";
-      return;
-    }
-    mode.current = "in-view";
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
-      },
-      { threshold: 0.6 },
-    );
-    observer.observe(video);
-    return () => observer.disconnect();
+    canPreview.current =
+      window.matchMedia("(hover: hover)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+      !connection?.saveData;
   }, []);
 
   const play = () => {
-    if (mode.current === "hover") videoRef.current?.play().catch(() => {});
+    if (canPreview.current) videoRef.current?.play().catch(() => {});
   };
   const pause = () => {
-    if (mode.current === "hover") videoRef.current?.pause();
+    videoRef.current?.pause();
   };
 
   return (
@@ -57,16 +40,27 @@ export function DemoCard({ demo, index }: { demo: Demo; index: number }) {
       className="group flex flex-col overflow-hidden rounded-xl border border-[var(--color-line)] bg-[var(--color-paper)] transition-transform duration-200 hover:-translate-y-1"
     >
       <div className="relative aspect-video overflow-hidden border-b border-[var(--color-line)] bg-[var(--color-cream-dim)]">
+        {/* The still sits behind the video as a lazy image, rather than as the
+            video's poster, so it only loads when the card is near the screen. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={demo.preview.poster}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          width={960}
+          height={540}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
         <video
           ref={videoRef}
-          poster={demo.preview.poster}
           muted
           loop
           playsInline
           preload="none"
           aria-hidden="true"
           tabIndex={-1}
-          className="h-full w-full object-cover"
+          className="relative h-full w-full object-cover"
         >
           <source src={demo.preview.webm} type="video/webm" />
           <source src={demo.preview.mp4} type="video/mp4" />
