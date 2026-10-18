@@ -4,6 +4,7 @@ export const site = {
   description:
     "AI is getting weird. Let's make it useful. Real prompts, real workflows, tested by Niamh — no fluff.",
   url: "https://n1amh.ai",
+  fiverrUrl: "https://fiverr.com",
 };
 
 export const socials = [

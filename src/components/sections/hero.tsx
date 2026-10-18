@@ -15,12 +15,20 @@ export function Hero() {
         <p className="mt-4 max-w-xl text-lg leading-relaxed text-[var(--color-ink)]/70">
           I spend an unreasonable amount of time testing AI so you don&apos;t have to.
         </p>
-        <a
-          href="#guides"
-          className="text-mono mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-6 py-3 text-xs font-bold uppercase tracking-wide text-[var(--color-cream)] transition-transform duration-150 hover:-translate-y-0.5"
-        >
-          Browse the guides →
-        </a>
+        <div className="mt-8 flex flex-wrap gap-4">
+          <a
+            href="#guides"
+            className="text-mono inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-6 py-3 text-xs font-bold uppercase tracking-wide text-[var(--color-cream)] transition-transform duration-150 hover:-translate-y-0.5"
+          >
+            Browse the guides →
+          </a>
+          <a
+            href="#work-with-me"
+            className="text-mono inline-flex items-center gap-2 rounded-full border border-[var(--color-ink)]/25 px-6 py-3 text-xs font-bold uppercase tracking-wide transition-colors duration-150 hover:border-[var(--color-ink)]/60"
+          >
+            Work with me
+          </a>
+        </div>
       </div>
     </section>
   );
