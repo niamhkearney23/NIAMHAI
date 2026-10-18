@@ -1,0 +1,303 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  :root{--navy:#0a1430;--navy2:#13224a;--gold:#f2c14e;--cream:#fbf6ec;--coral:#e0475b;--teal:#138a8f;--blue:#2f6fe0}
+  html,body{margin:0;background:var(--navy)}
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:"Inter Display","Inter",sans-serif;color:#fff;background:var(--navy)}
+  .scene{position:absolute;inset:0;display:none}
+  svg{position:absolute;inset:0;overflow:visible}
+  .ln{position:absolute;left:90px;right:60px;overflow:hidden;font-weight:900;letter-spacing:-3px;line-height:1.08;padding-bottom:8px;white-space:nowrap}
+  .ln .w{display:inline-block;margin-right:.24em;will-change:transform}
+  .sub{position:absolute;left:90px;right:90px;font-family:Inter;font-weight:600;font-size:44px;color:#c9d4f0}
+  .gold{color:var(--gold)} .coral{color:var(--coral)}
+  .tag{position:absolute;width:390px;height:150px;border-radius:26px;background:var(--cream);color:var(--navy);box-shadow:0 24px 50px rgba(0,0,0,.35);overflow:hidden;font-family:Inter}
+  .tag .band{height:34px;font-size:20px;font-weight:800;letter-spacing:3px;color:#fff;display:flex;align-items:center;padding-left:22px}
+  .tag .av{position:absolute;left:22px;top:52px;width:76px;height:76px;border-radius:50%}
+  .tag .role{position:absolute;left:116px;top:56px;font-weight:800;font-size:28px;line-height:1.1;white-space:nowrap}
+  .tag .where{position:absolute;left:116px;top:96px;font-weight:600;font-size:23px;color:#5a6788}
+  .slam{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-weight:900;letter-spacing:-6px}
+  .wm{display:flex;align-items:center;gap:22px;font-weight:900;letter-spacing:10px}
+</style></head>
+<body>
+<div id="stage">
+
+  <!-- 0: Intro / Lawgistics presents -->
+  <div class="scene" id="s0">
+    <svg width="1080" height="1920"><defs><radialGradient id="gG"><stop offset="0" stop-color="#f2c14e" stop-opacity=".22"/><stop offset="1" stop-color="#f2c14e" stop-opacity="0"/></radialGradient><radialGradient id="gC"><stop offset="0" stop-color="#e0475b" stop-opacity=".22"/><stop offset="1" stop-color="#e0475b" stop-opacity="0"/></radialGradient></defs><rect width="1080" height="1920" fill="#060c1e"/>
+      <circle id="s0glow" cx="540" cy="900" r="420" fill="url(#gG)"/>
+    </svg>
+    <div id="s0wm" style="position:absolute;left:0;right:0;top:820px;display:flex;flex-direction:column;align-items:center">
+      <svg id="s0mark" width="150" height="150" viewBox="0 0 150 150" style="position:relative">
+        <circle cx="75" cy="75" r="68" fill="none" stroke="#f2c14e" stroke-width="7" id="s0ring" stroke-dasharray="428" stroke-dashoffset="428"/>
+        <path id="s0route" d="M38 104 C60 104 58 46 112 46" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-dasharray="110" stroke-dashoffset="110"/>
+        <circle id="s0a" cx="38" cy="104" r="11" fill="#f2c14e"/><circle id="s0b" cx="112" cy="46" r="11" fill="#f2c14e"/>
+      </svg>
+      <div id="s0name" style="margin-top:44px;font-weight:900;font-size:84px;letter-spacing:14px;padding-left:14px"></div>
+      <div id="s0pres" style="margin-top:22px;font-family:Inter;font-weight:500;font-size:34px;letter-spacing:12px;color:#c9d4f0;padding-left:12px">PRESENTS</div>
+    </div>
+  </div>
+
+  <!-- 1: Singapore skyline -->
+  <div class="scene" id="s1">
+    <svg width="1080" height="1920">
+      <defs><linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#070f26"/><stop offset=".55" stop-color="#2b2a66"/><stop offset=".8" stop-color="#b8556a"/><stop offset="1" stop-color="#f29b5c"/></linearGradient>
+        <radialGradient id="sunG"><stop offset="0" stop-color="#ffe3a0"/><stop offset=".5" stop-color="#f2c14e"/><stop offset="1" stop-color="#f2c14e" stop-opacity="0"/></radialGradient></defs>
+      <g id="s1cam">
+        <rect x="-100" y="-100" width="1280" height="2120" fill="url(#sky1)"/>
+        <g id="stars"></g>
+        <circle id="sun" cx="780" cy="1330" r="260" fill="url(#sunG)"/>
+        <g id="skyBack" fill="#2a2f62"></g>
+        <g id="skyFront"></g>
+        <rect x="-100" y="1540" width="1280" height="500" fill="#0d1a3d"/>
+        <g id="ripples"></g>
+      </g>
+    </svg>
+    <div class="ln" id="s1a" style="top:300px;font-size:120px"></div>
+    <div class="ln" id="s1b" style="top:432px;font-size:120px"></div>
+    <div class="ln gold" id="s1c" style="top:564px;font-size:120px"></div>
+  </div>
+
+  <!-- 2: Pickup -->
+  <div class="scene" id="s2">
+    <svg width="1080" height="1920">
+      <rect width="1080" height="1920" fill="#f2c14e"/>
+      <circle cx="880" cy="760" r="190" fill="#f7d27a"/>
+      <g id="palms" fill="#d9a63a"></g>
+      <rect x="0" y="1270" width="1080" height="650" fill="#0a1430"/>
+      <rect x="0" y="1262" width="1080" height="14" fill="#e3b445"/>
+      <g id="dashes" fill="#f2c14e"></g>
+      <g id="speed" stroke="#0a1430" stroke-width="8" stroke-linecap="round" opacity=".5"></g>
+      <g id="coach"></g>
+      <g id="pin"><path d="M0 0 C-62 0 -88 44 -88 84 C-88 150 0 228 0 228 C0 228 88 150 88 84 C88 44 62 0 0 0 Z" fill="#e0475b"/><circle cx="0" cy="84" r="33" fill="#fff"/></g>
+      <g id="stamp"><circle r="120" fill="#e0475b"/><circle r="104" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="10 8"/>
+        <text y="-12" text-anchor="middle" font-family="Inter Display" font-weight="900" font-size="46" fill="#fff">FREE</text>
+        <text y="38" text-anchor="middle" font-family="Inter Display" font-weight="900" font-size="38" fill="#fff">PICKUP</text></g>
+    </svg>
+    <div class="ln" id="s2a" style="top:230px;font-size:112px;color:#0a1430"></div>
+    <div class="ln" id="s2b" style="top:356px;font-size:112px;color:#0a1430"></div>
+    <div class="sub" id="s2c" style="top:1560px;color:#f2c14e;font-size:46px">📍 [Pickup point] · [Time]</div>
+  </div>
+
+  <!-- 3: Causeway map -->
+  <div class="scene" id="s3">
+    <svg width="1080" height="1920">
+      <rect width="1080" height="1920" fill="#138a8f"/>
+      <g id="s3cam">
+        <g id="waves" stroke="#9fe3ea" stroke-width="5" fill="none" opacity=".4"></g>
+        <path d="M-200 -200 H1280 V700 Q800 770 540 725 Q260 680 -200 750 Z" fill="#143a2e"/>
+        <path d="M-200 2100 H1280 V1185 Q800 1130 540 1170 Q260 1215 -200 1160 Z" fill="#1b4a39"/>
+        <g fill="#1f5544" opacity=".9"><circle cx="160" cy="300" r="70"/><circle cx="260" cy="380" r="50"/><circle cx="930" cy="250" r="80"/><circle cx="170" cy="1700" r="90"/><circle cx="940" cy="1640" r="70"/></g>
+        <rect x="720" y="655" width="80" height="570" fill="#dcdcdc"/>
+        <line x1="760" y1="655" x2="760" y2="1225" stroke="#9aa3ad" stroke-width="5" stroke-dasharray="26 22"/>
+        <path id="trail" d="M760 1720 L760 560" stroke="#f2c14e" stroke-width="16" fill="none" stroke-linecap="round"/>
+        <circle id="ping" cx="760" cy="560" r="40" fill="none" stroke="#f2c14e" stroke-width="6"/>
+        <g id="bus"><rect x="-38" y="-62" width="76" height="124" rx="18" fill="#fff"/><rect x="-28" y="-50" width="56" height="30" rx="6" fill="#0a1430"/><rect x="-38" y="6" width="76" height="12" fill="#e0475b"/></g>
+        <text x="90" y="620" font-size="66" font-weight="900" fill="#fff" font-family="Inter Display" letter-spacing="2">JOHOR BAHRU 🇲🇾</text>
+        <text x="90" y="1420" font-size="66" font-weight="900" fill="#fff" font-family="Inter Display" letter-spacing="2">SINGAPORE 🇸🇬</text>
+        <text id="cwl" x="690" y="955" text-anchor="end" font-size="40" font-weight="700" fill="#eafcfd" font-family="Inter">The Causeway →</text>
+      </g>
+    </svg>
+    <div class="ln" id="s3a" style="top:110px;font-size:118px"></div><div class="ln" id="s3d" style="top:240px;font-size:118px"></div>
+    <div class="ln" id="s3b" style="top:1590px;font-size:64px;letter-spacing:-1px"></div>
+    <div class="ln" id="s3c" style="top:1672px;font-size:64px;letter-spacing:-1px;color:#f2c14e"></div>
+  </div>
+
+  <!-- 4: Network -->
+  <div class="scene" id="s4">
+    <svg width="1080" height="1920">
+      <rect width="1080" height="1920" fill="#0a1430"/>
+      <g id="grid" stroke="#1a2a58" stroke-width="2"></g>
+      <g id="links" stroke="#f2c14e" stroke-width="5" stroke-linecap="round" opacity=".85"></g>
+    </svg>
+    <div id="tags"></div>
+    <div class="ln" id="s4a" style="top:200px;font-size:112px"></div>
+    <div class="ln" id="s4b" style="top:326px;font-size:112px"></div>
+    <div class="ln" id="s4c" style="top:452px;font-size:112px"></div>
+    <div class="sub" id="s4d" style="top:1700px">Panels · Networking · Makan</div>
+  </div>
+
+  <!-- 5: Word slam -->
+  <div class="scene" id="s5">
+    <div class="slam" id="sl1" style="background:#f2c14e;color:#0a1430;font-size:270px">CROSS</div>
+    <div class="slam" id="sl2" style="background:#0a1430;color:#fff;font-size:400px">THE</div>
+    <div class="slam" id="sl3" style="background:#e0475b;color:#fff;font-size:172px">CAUSEWAY</div>
+  </div>
+
+  <!-- 6: End card -->
+  <div class="scene" id="s6">
+    <svg width="1080" height="1920">
+      <rect width="1080" height="1920" fill="#0a1430"/>
+      <circle id="blob1" cx="900" cy="300" r="520" fill="url(#gG)"/>
+      <circle id="blob2" cx="120" cy="1500" r="480" fill="url(#gC)"/>
+      <rect id="bar" x="90" y="650" width="0" height="14" fill="#f2c14e"/>
+    </svg>
+    <div class="sub" id="s6k" style="top:250px;color:#f2c14e;font-size:34px;letter-spacing:4px;white-space:nowrap">YOUNG LAWYERS MEET · JOHOR BAHRU</div>
+    <div class="ln" id="s6a" style="top:320px;font-size:158px;letter-spacing:-5px"></div>
+    <div class="ln" id="s6b" style="top:482px;font-size:158px;letter-spacing:-5px"></div>
+    <div id="rows" style="position:absolute;left:90px;right:90px;top:730px;font-family:Inter;font-size:50px;font-weight:600;line-height:1.85">
+      <div class="r">🗓️&nbsp; [Date]</div>
+      <div class="r">📍&nbsp; [Venue], Johor Bahru</div>
+      <div class="r">🚌&nbsp; Free pickup from Singapore</div>
+    </div>
+    <div id="cta" style="position:absolute;left:90px;right:90px;top:1150px;height:168px;border-radius:84px;background:#f2c14e;color:#0a1430;font-weight:900;font-size:62px;display:flex;align-items:center;justify-content:center">Register → [link]</div>
+    <div class="sub" id="s6f" style="top:1360px;text-align:center;font-size:38px">Seats on the coach are limited</div>
+    <div id="by" style="position:absolute;left:0;right:0;top:1640px;display:flex;flex-direction:column;align-items:center;gap:18px">
+      <div style="font-family:Inter;font-size:28px;letter-spacing:8px;color:#8f9cc4;font-weight:600">PRESENTED BY</div>
+      <div class="wm" style="font-size:60px">
+        <svg width="74" height="74" viewBox="0 0 150 150" style="position:relative"><circle cx="75" cy="75" r="68" fill="none" stroke="#f2c14e" stroke-width="9"/><path d="M38 104 C60 104 58 46 112 46" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round"/><circle cx="38" cy="104" r="13" fill="#f2c14e"/><circle cx="112" cy="46" r="13" fill="#f2c14e"/></svg>
+        <span>LAWGISTICS</span></div>
+    </div>
+  </div>
+
+  <!-- Wipe overlay -->
+  <svg id="wipe" width="1080" height="1920" style="pointer-events:none">
+    <g id="wipeG"><rect id="wA" x="0" y="-200" width="2200" height="2400" fill="#f2c14e"/><rect id="wB" x="0" y="-200" width="160" height="2400" fill="#e0475b"/></g>
+  </svg>
+  <div id="flash" style="position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const eo=x=>{x=clamp(x);return 1-Math.pow(1-x,4)};
+const eb=x=>{x=clamp(x);const c=1.7,c3=c+1;return 1+c3*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const io=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2};
+const P=(t,a,d)=>eo((t-a)/d);
+let S=11;const rnd=()=>{S=(S*9301+49297)%233280;return S/233280};
+
+// Scene windows (seconds). 120 BPM: bar = 2s.
+const SC=[["s0",0,2],["s1",2,6],["s2",6,10],["s3",10,14],["s4",14,18],["s5",18,20],["s6",20,26]];
+const WIPES=[6,10,14];
+
+// kinetic lines: words slide up out of a mask, staggered
+function setLine(id,html){ $(id).innerHTML=html.split(" ").map(w=>`<span class="w">${w}</span>`).join(""); }
+function reveal(id,t,a,st=0.07,d=0.55){ [...$(id).querySelectorAll(".w")].forEach((w,i)=>{const p=eo((t-a-i*st)/d); w.style.transform=`translateY(${(1-p)*115}%) rotate(${(1-p)*4}deg)`;}); }
+function fadeUp(el,t,a,dist=40,d=.5){const p=P(t,a,d);el.style.opacity=p;el.style.transform=`translateY(${(1-p)*dist}px)`}
+
+setLine("s1a","Young lawyers.");setLine("s1b","One day.");setLine("s1c","Two countries.");
+setLine("s2a","We'll pick you up");setLine("s2b","in Singapore.");
+setLine("s3a","Cross the");setLine("s3d","Causeway.");setLine("s3b","No driving.");setLine("s3c","No jam stress.");
+setLine("s4a","Meet lawyers");$("s4b").innerHTML=`<span class="w">from</span><span class="w gold">both</span><span class="w gold">sides</span>`;
+setLine("s4c","of the border.");
+setLine("s6a","CROSS THE");setLine("s6b","CAUSEWAY");
+$("s0name").innerHTML=[..."LAWGISTICS"].map(c=>`<span style="display:inline-block">${c}</span>`).join("");
+
+// ---- static builds ----
+(function(){ // stars
+  let s="";for(let i=0;i<60;i++)s+=`<circle cx="${rnd()*1080}" cy="${rnd()*900}" r="${1+rnd()*2.5}" fill="#fff" data-p="${rnd()*6}"/>`;$("stars").innerHTML=s;
+  let b="";for(let x=-60;x<1140;){const w=50+rnd()*90,h=120+rnd()*260;b+=`<rect x="${x}" y="${1540-h-60}" width="${w}" height="${h+60}"/>`;x+=w+6}$("skyBack").innerHTML=b;
+  // front skyline incl. Marina Bay Sands, with windows
+  const blds=[[30,1300,90],[130,1220,80],[220,1360,100],[330,1170,70],[740,1270,90],[840,1350,80],[930,1240,70],[1010,1380,110]];
+  let f=`<g fill="#0a1430">`;blds.forEach(([x,y,w])=>f+=`<rect x="${x}" y="${y}" width="${w}" height="${1545-y}"/>`);
+  f+=`<path d="M420 1545 L440 1230 L482 1230 L492 1545 Z"/><path d="M520 1545 L530 1220 L572 1220 L582 1545 Z"/><path d="M612 1545 L622 1210 L664 1210 L684 1545 Z"/><path d="M398 1215 Q550 1178 722 1194 L727 1216 Q550 1200 398 1234 Z"/></g><g id="wins" fill="#f2c14e">`;
+  blds.forEach(([x,y,w])=>{for(let yy=y+20;yy<1520;yy+=34)for(let xx=x+12;xx<x+w-14;xx+=26)if(rnd()<.28)f+=`<rect x="${xx}" y="${yy}" width="12" height="16" data-p="${rnd()}"/>`});
+  $("skyFront").innerHTML=f+"</g>";
+  let r="";for(let i=0;i<7;i++){const w=260-i*30;r+=`<rect x="${780-w/2}" y="${1580+i*40}" width="${w}" height="6" rx="3" fill="#f2c14e" opacity="${.55-i*.06}"/>`}$("ripples").innerHTML=r;
+  let p="";for(let i=0;i<6;i++){const x=i*240;p+=`<g transform="translate(${x},1262)"><rect x="-7" y="-260" width="14" height="260"/><path d="M0 -260 q-90 -20 -130 40 q70 -50 130 -30 q-60 -60 -120 -40 q80 -10 120 30 q30 -70 110 -60 q-60 0 -110 50 q90 -30 130 10 q-60 -40 -130 -40Z"/></g>`}$("palms").innerHTML=p;
+  let w="";for(let i=0;i<10;i++){const y=790+i*42;w+=`<path d="M${40+(i%3)*80} ${y} q30 -16 60 0 t60 0"/><path d="M${860+(i%2)*60} ${y+18} q30 -16 60 0 t60 0"/><path d="M${380+(i%2)*70} ${y+8} q30 -16 60 0 t60 0"/>`}$("waves").innerHTML=w;
+  let g="";for(let x=0;x<=1080;x+=90)g+=`<line x1="${x}" y1="0" x2="${x}" y2="1920"/>`;for(let y=0;y<=1920;y+=90)g+=`<line x1="0" y1="${y}" x2="1080" y2="${y}"/>`;$("grid").innerHTML=g;
+})();
+
+const TAGS=[
+  {x:60,y:720,r:"Associate",w:"Singapore",f:"🇸🇬",c:"#e0475b",d:0.35},
+  {x:630,y:690,r:"Pupil in Chambers",w:"Johor Bahru",f:"🇲🇾",c:"#2f6fe0",d:0.6},
+  {x:345,y:960,r:"In-house Counsel",w:"Singapore",f:"🇸🇬",c:"#e0475b",d:0.85},
+  {x:60,y:1220,r:"Litigator",w:"Kuala Lumpur",f:"🇲🇾",c:"#2f6fe0",d:1.1},
+  {x:630,y:1210,r:"Practice Trainee",w:"Singapore",f:"🇸🇬",c:"#e0475b",d:1.35},
+  {x:345,y:1450,r:"Legal Associate",w:"Johor Bahru",f:"🇲🇾",c:"#2f6fe0",d:1.6},
+];
+$("tags").innerHTML=TAGS.map((g,i)=>`<div class="tag" id="tg${i}"><div class="band" style="background:${g.c}">HELLO ${g.f}</div><div class="av" style="background:${g.c}33"><svg width="76" height="76" viewBox="0 0 76 76" style="position:relative"><circle cx="38" cy="30" r="14" fill="${g.c}"/><path d="M14 66 q24 -34 48 0" fill="${g.c}"/></svg></div><div class="role">${g.r}</div><div class="where">${g.w}</div></div>`).join("");
+const LINKS=[[0,1],[0,2],[1,2],[2,3],[2,4],[3,5],[4,5],[1,4],[0,3]];
+
+function coachSVG(rot,bob){return `<g transform="translate(0,${bob})">
+  <rect x="-280" y="-205" width="560" height="200" rx="38" fill="#fff"/>
+  <rect x="-280" y="-78" width="560" height="38" fill="#e0475b"/>
+  <rect x="-280" y="-40" width="560" height="14" fill="#0a1430" opacity=".15"/>
+  ${[-248,-138,-28,82].map(x=>`<rect x="${x}" y="-178" width="96" height="86" rx="12" fill="#0a1430"/><rect x="${x+8}" y="-170" width="30" height="70" rx="6" fill="#2f6fe0" opacity=".5"/>`).join("")}
+  <rect x="196" y="-178" width="62" height="156" rx="12" fill="#2f6fe0"/>
+  <text x="-120" y="-50" font-family="Inter Display" font-weight="900" font-size="30" fill="#fff" letter-spacing="4">SG → JB</text></g>
+  ${[-170,165].map(x=>`<g transform="translate(${x},0) rotate(${rot})"><circle r="52" fill="#1a1a1a"/><circle r="24" fill="#c8c8c8"/><rect x="-5" y="-46" width="10" height="28" fill="#c8c8c8"/><rect x="-46" y="-5" width="28" height="10" fill="#c8c8c8"/></g>`).join("")}`}
+
+function show(id,on){$(id).style.display=on?"block":"none"}
+
+function render(t){
+  // which scene is live
+  SC.forEach(([id,a,b])=>show(id,t>=a&&t<b));
+  if(t>=26) show("s6",true);
+
+  // ---- S0 intro
+  {const l=t; $("s0ring").setAttribute("stroke-dashoffset",428*(1-P(l,.05,.7)));
+   $("s0route").setAttribute("stroke-dashoffset",110*(1-P(l,.35,.5)));
+   [$("s0a"),$("s0b")].forEach((c,i)=>c.setAttribute("r",11*eb((l-.3-i*.35)/.3)));
+   [...$("s0name").children].forEach((c,i)=>{const p=P(l,.55+i*.04,.45);c.style.opacity=p;c.style.transform=`translateY(${(1-p)*50}px)`});
+   fadeUp($("s0pres"),l,1.05,20);
+   $("s0wm").style.transform=`scale(${1+l*.03})`; $("s0glow").setAttribute("r",380+l*40);
+   if(l>1.75){const k=clamp((l-1.75)/.25);$("s0wm").style.opacity=1-k;$("s0wm").style.transform=`scale(${1.05+k*.4})`} else $("s0wm").style.opacity=1;}
+
+  // ---- S1 skyline
+  {const l=t-2;
+   $("s1cam").setAttribute("transform",`translate(540,960) scale(${1.12-0.1*io(l/4)}) translate(-540,-960)`);
+   $("skyBack").setAttribute("transform",`translate(${-l*6},${(1-P(l,0,1.2))*140})`);
+   $("skyFront").setAttribute("transform",`translate(${-l*14},${(1-P(l,.1,1.1))*220})`);
+   $("sun").setAttribute("cy",1330-l*25);
+   [...$("stars").children].forEach(s=>s.setAttribute("opacity",.35+.4*Math.sin(l*3+ +s.dataset.p)));
+   [...$("wins").children].forEach(w=>w.setAttribute("opacity",(+w.dataset.p+l*.25)%1<.85?1:.15));
+   $("ripples").setAttribute("transform",`translate(${Math.sin(l*2)*10},0)`);
+   reveal("s1a",l,.15);reveal("s1b",l,.75);reveal("s1c",l,1.25);
+   if(l<.25) $("stage").style.background="#060c1e";}
+
+  // ---- S2 pickup
+  {const l=t-6, speed=l*900;
+   reveal("s2a",l,.35);reveal("s2b",l,.6);fadeUp($("s2c"),l,1.6,30);
+   const enter=-420+io(l/1.1)*(470+420);
+   let d="";for(let x=-200;x<1300;x+=200)d+=`<rect x="${((x-speed)%1400+1400)%1400-200}" y="1480" width="100" height="18" rx="9"/>`;$("dashes").innerHTML=d;
+   $("palms").setAttribute("transform",`translate(${-((l*260)%240)},0)`);
+   const bob=Math.sin(l*18)*3;
+   $("coach").innerHTML=`<g transform="translate(${enter},1262)">${coachSVG(l*900,bob)}</g>`;
+   let s="";for(let i=0;i<5;i++){const y=1060+i*36, len=120+((i*53)%90), off=(l*1400+i*120)%300;s+=`<line x1="${enter-330-off}" y1="${y}" x2="${enter-330-off-len}" y2="${y}"/>`}
+   $("speed").innerHTML=s;$("speed").setAttribute("opacity",l>.3?.5:0);
+   const pp=eb((l-1.0)/.45);$("pin").setAttribute("transform",`translate(${enter+20},${740-(1-clamp(pp))*260}) scale(${Math.max(0,pp)})`);
+   const sp=eb((l-2.0)/.35);$("stamp").setAttribute("transform",`translate(840,1700) rotate(${-14+(1-clamp(sp))*30}) scale(${Math.max(0,sp)})`);}
+
+  // ---- S3 causeway
+  {const l=t-10, p=io((l-.55)/2.6), y=1720-p*1160, len=1160;
+   $("s3cam").setAttribute("transform",`translate(540,960) scale(${1+.07*io(l/4)}) translate(-540,${-960+(1-io(l/4))*40})`);
+   $("bus").setAttribute("transform",`translate(760,${y})`);
+   const tr=$("trail");tr.setAttribute("stroke-dasharray",len);tr.setAttribute("stroke-dashoffset",len*(1-p));
+   const pg=clamp((l-3.15)/.7);$("ping").setAttribute("r",40+pg*140);$("ping").setAttribute("opacity",pg>0?1-pg:0);
+   $("waves").setAttribute("transform",`translate(${Math.sin(l*2.4)*16},0)`);
+   reveal("s3a",l,.15,.08);reveal("s3d",l,.35);reveal("s3b",l,2.0);reveal("s3c",l,2.4);}
+
+  // ---- S4 network
+  {const l=t-14;
+   reveal("s4a",l,.15);reveal("s4b",l,.4);reveal("s4c",l,.65);fadeUp($("s4d"),l,2.4,30);
+   $("grid").setAttribute("transform",`translate(0,${-l*20})`);
+   const pos=TAGS.map((g,i)=>{const p=eb((l-g.d)/.45);const fx=Math.sin(l*1.6+i)*8,fy=Math.cos(l*1.3+i*2)*10;
+     const el=$("tg"+i);el.style.left=(g.x+fx)+"px";el.style.top=(g.y+fy)+"px";el.style.transform=`scale(${Math.max(0,p)}) rotate(${(i%2?3:-3)*(1-clamp(p))+(i%2?1.5:-1.5)}deg)`;
+     return [g.x+fx+195,g.y+fy+75];});
+   $("links").innerHTML=LINKS.map(([a,b],k)=>{const p=P(l,1.7+k*.12,.45);const A=pos[a],B=pos[b];return `<line x1="${A[0]}" y1="${A[1]}" x2="${A[0]+(B[0]-A[0])*p}" y2="${A[1]+(B[1]-A[1])*p}"/>`}).join("");}
+
+  // ---- S5 slam (one word per beat)
+  {const l=t-18;["sl1","sl2","sl3"].forEach((id,i)=>{const a=i*.5,on=t>=18&&t<20&&l>=a&&(i==2||l<a+.5);const el=$(id);el.style.display=on?"flex":"none";
+     if(on){const k=l-a;el.style.transform=`scale(${1+.25*Math.exp(-k*14)+k*.06})`;}});}
+
+  // ---- S6 end card
+  {const l=t-20;
+   fadeUp($("s6k"),l,.15,20);reveal("s6a",l,.25,.09);reveal("s6b",l,.45);
+   $("bar").setAttribute("width",P(l,.9,.6)*900);
+   [...document.querySelectorAll("#rows .r")].forEach((r,i)=>fadeUp(r,l,1.1+i*.22,36));
+   const cp=eb((l-1.9)/.45),cta=$("cta");cta.style.opacity=clamp(cp*2);
+   const beat=(l%.5)/.5;cta.style.transform=`scale(${l>2.4?1+.035*Math.exp(-beat*6):Math.max(0,cp)})`;
+   fadeUp($("s6f"),l,2.4,16);fadeUp($("by"),l,2.8,30,.6);
+   $("blob1").setAttribute("cx",900+Math.sin(l*.8)*60);$("blob2").setAttribute("cy",1500+Math.cos(l*.7)*60);}
+
+  // ---- transitions
+  let wx=null;for(const b of WIPES){const k=(t-(b-.28))/.56;if(k>=0&&k<=1){wx=k}}
+  if(wx!==null){const x=-3000+io(wx)*4280;$("wipeG").setAttribute("transform",`translate(${x},0) skewX(-14)`);$("wA").setAttribute("x",0);$("wB").setAttribute("x",2200);$("wipe").style.display="block"} else $("wipe").style.display="none";
+  let fl=0;if(t>=2&&t<2.35)fl=.9*(1-(t-2)/.35);if(t>=20&&t<20.4)fl=(1-(t-20)/.4);if(t>=18&&t<18.15)fl=.5*(1-(t-18)/.15);
+  $("flash").style.opacity=fl;
+}
+window.render=render;window.DURATION=26.0;render(0);
+</script>
+</body></html>
