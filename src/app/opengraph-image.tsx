@@ -14,17 +14,17 @@ export default function Image() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          background: "#0d0c0a",
+          background: "#ffffff",
           padding: "80px",
         }}
       >
-        <div style={{ display: "flex", fontSize: 130, fontWeight: 900, color: "#f6f1e4" }}>
-          N<span style={{ color: "#ff5a1f" }}>1</span>AMH
-          <span style={{ fontSize: 52, marginLeft: 24, alignSelf: "flex-start", marginTop: 24 }}>
+        <div style={{ display: "flex", fontSize: 110, fontWeight: 700, color: "#111827" }}>
+          N<span style={{ color: "#4f46e5" }}>1</span>AMH
+          <span style={{ fontSize: 46, marginLeft: 20, alignSelf: "flex-start", marginTop: 20, color: "#6b7280" }}>
             AI
           </span>
         </div>
-        <div style={{ display: "flex", marginTop: 24, fontSize: 40, color: "#f6f1e4cc" }}>
+        <div style={{ display: "flex", marginTop: 24, fontSize: 36, color: "#6b7280" }}>
           {site.tagline}
         </div>
       </div>

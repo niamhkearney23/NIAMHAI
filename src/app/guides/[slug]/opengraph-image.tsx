@@ -19,27 +19,19 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#0d0c0a",
+          background: "#ffffff",
           padding: "80px",
         }}
       >
-        <div style={{ display: "flex", fontSize: 32, fontWeight: 900, color: "#ff5a1f" }}>
-          N<span>1</span>AMH AI{guide ? ` / ${guide.category}` : ""}
+        <div style={{ display: "flex", fontSize: 28, fontWeight: 700, color: "#4f46e5" }}>
+          N1AMH AI{guide ? ` · ${guide.category}` : ""}
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div
-            style={{
-              display: "flex",
-              fontSize: 64,
-              fontWeight: 900,
-              color: "#f6f1e4",
-              lineHeight: 1.1,
-            }}
-          >
+          <div style={{ display: "flex", fontSize: 58, fontWeight: 700, color: "#111827", lineHeight: 1.15 }}>
             {title}
           </div>
           {outcome && (
-            <div style={{ display: "flex", marginTop: 20, fontSize: 32, color: "#f6f1e4cc" }}>
+            <div style={{ display: "flex", marginTop: 18, fontSize: 30, color: "#6b7280" }}>
               {outcome}
             </div>
           )}

@@ -44,20 +44,18 @@ export default async function GuidePage({
         <div className="mx-auto max-w-3xl">
           <Link
             href="/#guides"
-            className="text-mono text-xs font-bold uppercase tracking-wide text-[var(--color-accent)] hover:underline"
+            className="text-sm font-medium text-[var(--color-accent)] hover:underline"
           >
             ← All guides
           </Link>
 
-          <p className="text-mono mt-8 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-accent)]">
-            {guide.category} / GUIDE {String(guideIndex + 1).padStart(2, "0")}
+          <p className="mt-8 text-sm font-medium text-[var(--color-accent)]">
+            {guide.category} · Guide {String(guideIndex + 1).padStart(2, "0")}
           </p>
-          <h1 className="text-display mt-3 text-4xl sm:text-6xl">{guide.title}</h1>
-          <p className="text-accent-serif mt-4 text-2xl text-[var(--color-ink)]/80">
-            {guide.outcome}
-          </p>
+          <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{guide.title}</h1>
+          <p className="mt-3 text-xl text-[var(--color-muted)]">{guide.outcome}</p>
 
-          <div className="mt-8 border-y border-[var(--color-line)] py-6">
+          <div className="mt-8 border-y border-[var(--color-border)] py-6">
             <GuideMetadata guide={guide} />
           </div>
 
@@ -67,7 +65,7 @@ export default async function GuidePage({
                 return (
                   <div key={i}>
                     {block.heading && (
-                      <h2 className="text-display text-2xl sm:text-3xl">{block.heading}</h2>
+                      <h2 className="text-xl font-semibold tracking-tight">{block.heading}</h2>
                     )}
                     {block.paragraphs.map((paragraph, pi) => (
                       <p
@@ -81,17 +79,16 @@ export default async function GuidePage({
                 );
               }
               if (block.type === "prompt") {
-                return <CopyPrompt key={i} prompt={block.prompt} label={block.label ?? "PROMPT"} />;
+                return <CopyPrompt key={i} prompt={block.prompt} label={block.label ?? "Prompt"} />;
               }
               return <GuideCallout key={i} kind={block.kind} heading={block.heading} body={block.body} />;
             })}
           </div>
 
           {next.length > 0 && (
-            <div className="mt-16 border-t border-[var(--color-line)] pt-10">
-              <p className="text-display text-2xl sm:text-3xl">
-                You&apos;ve got this working.{" "}
-                <span className="text-accent-serif normal-case">What next?</span>
+            <div className="mt-16 border-t border-[var(--color-border)] pt-10">
+              <p className="text-xl font-semibold tracking-tight">
+                You&apos;ve got this working. What next?
               </p>
               <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
                 {next.map((g) => {

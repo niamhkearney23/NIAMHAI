@@ -1,38 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --color-cream: #f6f1e4;
-  --color-cream-dim: #ece4d0;
-  --color-paper: #fbf8f0;
-  --color-ink: #1a1814;
-  --color-black: #0d0c0a;
-  --color-charcoal: #211f1b;
-  --color-line: rgba(26, 24, 20, 0.14);
-  --color-line-dark: rgba(246, 241, 228, 0.16);
+  --color-bg: #ffffff;
+  --color-bg-subtle: #f8f9fb;
+  --color-ink: #111827;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
 
-  --color-accent: #ff5a1f;
-  --color-accent-dim: rgba(255, 90, 31, 0.14);
+  --color-accent: #4f46e5;
+  --color-accent-hover: #4338ca;
+  --color-accent-soft: rgba(79, 70, 229, 0.08);
 
-  --font-display: var(--font-archivo-black), "Arial Black", sans-serif;
-  --font-accent: var(--font-instrument-serif), Georgia, serif;
-  --font-body: var(--font-inter), system-ui, sans-serif;
+  --color-green: #15803d;
+  --color-red: #b91c1c;
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", monospace;
 }
 
 @theme inline {
-  --color-cream: var(--color-cream);
-  --color-cream-dim: var(--color-cream-dim);
-  --color-paper: var(--color-paper);
+  --color-bg: var(--color-bg);
+  --color-bg-subtle: var(--color-bg-subtle);
   --color-ink: var(--color-ink);
-  --color-black: var(--color-black);
-  --color-charcoal: var(--color-charcoal);
-  --color-line: var(--color-line);
-  --color-line-dark: var(--color-line-dark);
+  --color-muted: var(--color-muted);
+  --color-border: var(--color-border);
   --color-accent: var(--color-accent);
-  --color-accent-dim: var(--color-accent-dim);
-  --font-display: var(--font-display);
-  --font-accent: var(--font-accent);
-  --font-body: var(--font-body);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-soft: var(--color-accent-soft);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 }
 
@@ -41,40 +36,24 @@
 }
 
 html {
-  background: var(--color-cream);
+  background: var(--color-bg);
   scroll-behavior: smooth;
 }
 
 body {
-  background: var(--color-cream);
+  background: var(--color-bg);
   color: var(--color-ink);
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--color-accent);
-  color: var(--color-cream);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
 }
 
-.text-display {
-  font-family: var(--font-display);
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  line-height: 0.92;
-}
-
-.text-accent-serif {
-  font-family: var(--font-accent);
-  font-style: italic;
-  font-weight: 400;
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-.text-mono {
+.font-mono {
   font-family: var(--font-mono);
-  letter-spacing: 0.02em;
 }
 
 .underline-grow {
@@ -88,7 +67,7 @@ body {
   left: 0;
   right: 100%;
   bottom: -2px;
-  height: 2px;
+  height: 1px;
   background: currentColor;
   transition: right 180ms ease;
 }

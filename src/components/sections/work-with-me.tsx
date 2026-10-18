@@ -6,7 +6,7 @@ export function WorkWithMe() {
   return (
     <section
       id="work-with-me"
-      className="border-b border-[var(--color-line)] bg-[var(--color-cream-dim)] px-5 py-16 sm:px-8 sm:py-24"
+      className="border-b border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-5 py-16 sm:px-8 sm:py-24"
     >
       <div className="mx-auto max-w-5xl">
         <div className="flex flex-wrap items-end justify-between gap-6">
@@ -20,7 +20,7 @@ export function WorkWithMe() {
             href={site.fiverrUrl}
             target="_blank"
             rel="noreferrer"
-            className="text-mono inline-flex shrink-0 items-center gap-2 rounded-full bg-[var(--color-accent)] px-6 py-3 text-xs font-bold uppercase tracking-wide text-[var(--color-cream)] transition-transform duration-150 hover:-translate-y-0.5"
+            className="inline-flex shrink-0 items-center gap-2 rounded-md bg-[var(--color-accent)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-accent-hover)]"
           >
             Hire me on Fiverr →
           </a>
@@ -30,10 +30,10 @@ export function WorkWithMe() {
           {services.map((service) => (
             <div
               key={service.title}
-              className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper)] p-6"
+              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-6"
             >
-              <h3 className="text-display text-xl">{service.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--color-ink)]/75">
+              <h3 className="text-lg font-semibold tracking-tight">{service.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--color-muted)]">
                 {service.description}
               </p>
             </div>

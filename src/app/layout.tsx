@@ -1,23 +1,10 @@
 import type { Metadata } from "next";
-import { Archivo_Black, Instrument_Serif, Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/lib/site";
-
-const archivoBlack = Archivo_Black({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-archivo-black",
-});
-
-const instrumentSerif = Instrument_Serif({
-  weight: "400",
-  style: ["italic", "normal"],
-  subsets: ["latin"],
-  variable: "--font-instrument-serif",
-});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -52,9 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${archivoBlack.variable} ${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased`}
-      >
+      <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />

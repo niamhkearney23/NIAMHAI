@@ -1,30 +1,25 @@
-import { Wordmark } from "@/components/brand/wordmark";
-
 export function Hero() {
   return (
-    <section className="border-b border-[var(--color-line)] px-5 py-16 sm:px-8 sm:py-24">
-      <div className="mx-auto max-w-3xl">
-        <p className="text-accent-serif text-2xl sm:text-3xl">hey, it&apos;s Niamh —</p>
-        <div className="mt-2">
-          <Wordmark size="hero" />
-        </div>
-        <p className="mt-8 max-w-xl text-2xl leading-snug sm:text-3xl">
-          <span className="text-accent-serif text-[1.15em]">Let&apos;s make AI</span> actually
-          useful: real prompts, real workflows, no fluff.
+    <section className="px-5 py-20 sm:px-8 sm:py-28">
+      <div className="mx-auto max-w-2xl">
+        <p className="text-sm font-medium text-[var(--color-muted)]">Hey, it&apos;s Niamh —</p>
+        <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
+          Let&apos;s make AI actually useful.
+        </h1>
+        <p className="mt-5 max-w-lg text-lg leading-relaxed text-[var(--color-muted)]">
+          Real prompts, real workflows, no fluff. I spend an unreasonable amount of time testing
+          AI so you don&apos;t have to.
         </p>
-        <p className="mt-4 max-w-xl text-lg leading-relaxed text-[var(--color-ink)]/70">
-          I spend an unreasonable amount of time testing AI so you don&apos;t have to.
-        </p>
-        <div className="mt-8 flex flex-wrap gap-4">
+        <div className="mt-8 flex flex-wrap gap-3">
           <a
             href="#guides"
-            className="text-mono inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-6 py-3 text-xs font-bold uppercase tracking-wide text-[var(--color-cream)] transition-transform duration-150 hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-accent-hover)]"
           >
-            Browse the guides →
+            Browse the guides
           </a>
           <a
             href="#work-with-me"
-            className="text-mono inline-flex items-center gap-2 rounded-full border border-[var(--color-ink)]/25 px-6 py-3 text-xs font-bold uppercase tracking-wide transition-colors duration-150 hover:border-[var(--color-ink)]/60"
+            className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] px-5 py-2.5 text-sm font-semibold text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]/30 hover:bg-[var(--color-bg-subtle)]"
           >
             Work with me
           </a>
