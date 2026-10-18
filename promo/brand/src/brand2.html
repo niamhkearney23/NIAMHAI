@@ -1,0 +1,218 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @font-face{font-family:Newsreader;font-weight:500;src:url(fonts/newsreader-latin-500-normal.woff2)}
+  @font-face{font-family:Newsreader;font-weight:600;src:url(fonts/newsreader-latin-600-normal.woff2)}
+  @font-face{font-family:"Instrument Sans";font-weight:400;src:url(fonts/instrument-sans-latin-400-normal.woff2)}
+  @font-face{font-family:"Instrument Sans";font-weight:500;src:url(fonts/instrument-sans-latin-500-normal.woff2)}
+  @font-face{font-family:"IBM Plex Mono";font-weight:400;src:url(fonts/ibm-plex-mono-latin-400-normal.woff2)}
+  @font-face{font-family:"IBM Plex Mono";font-weight:500;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2)}
+
+  /* Lawgistics brand tokens */
+  :root{
+    --navy:#171B28; --cream:#F1EBDE; --peri:#A8C0EA; --steel:#46648F;
+    --surface-raised:#1E2333;            /* raised card on navy */
+    --line-on-navy:rgba(241,235,222,.16); /* 1px borders on navy */
+    --line-on-cream:rgba(23,27,40,.16);
+    --faint-on-navy:rgba(241,235,222,.48);
+    --faint-on-cream:rgba(23,27,40,.48);
+    --radius-md:14px;
+    --m:96px;                             /* outer margin */
+  }
+  html,body{margin:0;background:var(--navy)}
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--navy)}
+  .sc{position:absolute;inset:0;display:none}
+  .navy{background:var(--navy);color:var(--cream)}
+  .cream{background:var(--cream);color:var(--navy)}
+  .peri{background:var(--peri);color:var(--navy)}
+
+  .kicker{font-family:"IBM Plex Mono";font-weight:500;font-size:24px;letter-spacing:5px;text-transform:uppercase}
+  .navy .kicker{color:var(--peri)} .cream .kicker{color:var(--steel)} .peri .kicker{color:var(--navy)}
+  .hl{font-family:Newsreader;font-weight:500;letter-spacing:-.012em;line-height:1.06}
+  .ln{display:block;overflow:hidden;padding-bottom:.08em}
+  .ln>span{display:inline-block;will-change:transform}
+  .body{font-family:"Instrument Sans";font-weight:400}
+
+  /* vertically centred content block, left aligned on the margin */
+  .block{position:absolute;left:var(--m);right:var(--m);top:50%;transform:translateY(-50%)}
+
+  /* footer row */
+  .foot{position:absolute;left:var(--m);right:var(--m);bottom:0;height:150px;display:flex;align-items:center;justify-content:space-between}
+  .foot::before{content:"";position:absolute;left:0;right:0;top:0;height:1px}
+  .navy .foot::before,.photo .foot::before{background:var(--line-on-navy)}
+  .cream .foot::before{background:var(--line-on-cream)} .peri .foot::before{background:rgba(23,27,40,.22)}
+  .pg{font-family:"IBM Plex Mono";font-size:20px;letter-spacing:4px;text-transform:uppercase}
+  .navy .pg,.photo .pg{color:var(--faint-on-navy)} .cream .pg,.peri .pg{color:var(--faint-on-cream)}
+  .wm{font-family:Newsreader;font-weight:500;font-size:40px;letter-spacing:-.01em}
+  .navy .wm,.photo .wm{color:var(--cream)} .cream .wm,.peri .wm{color:var(--navy)}
+  .navy .wm i,.photo .wm i{color:var(--peri);font-style:normal} .cream .wm i,.peri .wm i{color:var(--steel);font-style:normal}
+
+  /* photo scenes: solid navy bands, picture window between */
+  .photo{background:var(--navy);color:var(--cream)}
+  .win{position:absolute;left:0;right:0;top:180px;height:1560px;overflow:hidden;background:var(--navy)}
+  .win img{position:absolute;left:0;top:-187px;width:1080px;height:1935px;filter:saturate(.86) contrast(1.04);will-change:transform}
+  .photo .kicker{position:absolute;left:var(--m);top:78px;color:var(--peri)}
+  .photo .foot{height:180px}
+
+  .card{background:var(--surface-raised);border:1px solid var(--line-on-navy);border-radius:var(--radius-md)}
+  .row{display:flex;align-items:baseline;padding:30px 40px;border-top:1px solid var(--line-on-navy)}
+  .row:first-child{border-top:0}
+  .row .lab{font-family:"IBM Plex Mono";font-size:22px;letter-spacing:4px;color:var(--faint-on-navy);width:230px;flex:none}
+  .row .v{font-family:"Instrument Sans";font-weight:500;font-size:38px;color:var(--cream)}
+
+  #fade{position:absolute;inset:0;background:var(--navy);pointer-events:none}
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- opening: her on the coach, slow zoom, "This could be you." on a solid navy panel -->
+  <div class="sc photo" id="n1" data-kb='{"s0":1.0,"s1":1.55,"x0":0,"x1":0,"y0":0,"y1":0,"ox":745,"oy":984,"top":-444,"ease":"es"}'>
+    <div class="win" style="height:1080px"><img src="img/02-coach.png"></div>
+    <div class="kicker" data-at=".4">On the coach</div>
+    <div style="position:absolute;left:var(--m);right:var(--m);top:1340px">
+      <div class="hl" data-at="1.9" style="font-size:112px;color:var(--cream)"><span class="ln"><span>This could be you.</span></span></div>
+    </div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <div class="sc cream" id="n2">
+    <div class="block">
+      <div class="kicker" data-at=".1">The invitation</div>
+      <div class="hl" data-at=".25" style="font-size:150px;margin-top:40px"><span class="ln"><span>Here is why.</span></span></div>
+    </div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <div class="sc navy" id="n3">
+    <div class="block">
+      <div class="kicker" data-at=".15">Young lawyers meet · Johor Bahru</div>
+      <div class="hl" data-at=".3" style="font-size:100px;margin-top:44px"><span class="ln"><span>We are hosting</span></span><span class="ln"><span>10 young lawyers</span></span><span class="ln"><span>in Johor Bahru.</span></span></div>
+      <div class="hl" data-at="1.9" style="font-size:100px;margin-top:28px;color:var(--peri)"><span class="ln"><span>You are invited.</span></span></div>
+    </div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <div class="sc photo" id="n4" data-kb='{"s0":1.04,"s1":1.16,"x0":0,"x1":-10,"y0":10,"y1":-36}'>
+    <div class="win"><img src="img/01-pickup.png"></div>
+    <div class="kicker" data-at=".35">Pickup · Singapore</div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <div class="sc cream" id="n5">
+    <div class="block">
+      <div class="kicker" data-at=".15">The pickup</div>
+      <div class="hl" data-at=".3" style="font-size:100px;margin-top:44px"><span class="ln"><span>We pick you up</span></span><span class="ln"><span>in Singapore.</span></span></div>
+      <div class="hl" data-at="1.45" style="font-size:100px;margin-top:28px"><span class="ln"><span>The coach does</span></span><span class="ln"><span>the rest.</span></span></div>
+    </div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <div class="sc photo" id="n6" data-kb='{"s0":1.0,"s1":1.16,"x0":0,"x1":0,"y0":50,"y1":-60}'>
+    <div class="win"><img src="img/03-causeway.png"></div>
+    <div class="kicker" data-at=".35">The Causeway</div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <div class="sc navy" id="n7">
+    <div class="block">
+      <div class="kicker" data-at=".15">The room</div>
+      <div class="hl" data-at=".3" style="font-size:96px;margin-top:44px"><span class="ln"><span>Your peers are across</span></span><span class="ln"><span>the Causeway.</span></span></div>
+      <div class="hl" data-at="1.45" style="font-size:96px;margin-top:28px"><span class="ln"><span>So is your next</span></span><span class="ln"><span>referral.</span></span></div>
+    </div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <div class="sc photo" id="n8" data-kb='{"s0":1.12,"s1":1.02,"x0":-36,"x1":30,"y0":0,"y1":0}'>
+    <div class="win"><img src="img/04-group.png"></div>
+    <div class="kicker" data-at=".35">Johor Bahru</div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+  <div class="sc photo" id="n9" data-dis="1" data-kb='{"s0":1.2,"s1":1.08,"x0":0,"x1":-16,"y0":-10,"y1":8}'>
+    <div class="win"><img src="img/05-handshake.png"></div>
+    <div class="kicker" data-at=".2">Johor Bahru</div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+  <div class="sc photo" id="n10" data-dis="1" data-kb='{"s0":1.0,"s1":1.12,"x0":0,"x1":0,"y0":0,"y1":-40}'>
+    <div class="win"><img src="img/06-panel.png"></div>
+    <div class="kicker" data-at=".2">The panel</div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <div class="sc peri" id="n11">
+    <div class="block">
+      <div class="kicker" data-at=".5">Young lawyers meet · Johor Bahru</div>
+      <div class="hl" data-at=".12" style="font-size:168px;font-weight:600;margin-top:48px;letter-spacing:-.02em"><span class="ln"><span>Cross the</span></span><span class="ln"><span>Causeway.</span></span></div>
+    </div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <div class="sc navy" id="n12">
+    <div class="block">
+      <div class="kicker" data-at=".15">The details</div>
+      <div class="hl" data-at=".3" style="font-size:88px;margin-top:40px"><span class="ln"><span>Free coach from</span></span><span class="ln"><span>Singapore.</span></span></div>
+      <div class="card" data-at="1.0" style="margin-top:64px">
+        <div class="row" data-at="1.25"><span class="lab">DATE</span><span class="v">[Date]</span></div>
+        <div class="row" data-at="1.45"><span class="lab">VENUE</span><span class="v">[Venue], Johor Bahru</span></div>
+        <div class="row" data-at="1.65"><span class="lab">PICKUP</span><span class="v">[Pickup point], [Time]</span></div>
+        <div class="row" data-at="1.85"><span class="lab">REGISTER</span><span class="v">[Link]</span></div>
+      </div>
+      <div class="body" data-at="2.4" style="font-size:36px;margin-top:40px;color:var(--faint-on-navy)">Ten places only.</div>
+    </div>
+    <div class="foot"><span class="pg"></span><span class="wm">Lawgistics<i>.</i></span></div>
+  </div>
+
+  <div class="sc cream" id="n13">
+    <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center">
+      <svg data-at="0" data-logo="1" width="220" height="220" viewBox="0 0 220 220">
+        <circle cx="110" cy="110" r="110" fill="#171B28"/>
+        <text x="86" y="152" text-anchor="middle" font-family="Newsreader" font-weight="600" font-size="148" fill="#F1EBDE">L</text>
+        <circle cx="146" cy="142" r="11" fill="#A8C0EA"/>
+      </svg>
+      <div class="wm" data-at=".4" style="font-size:96px;margin-top:56px">Lawgistics<i>.</i></div>
+      <div class="body" data-at=".7" style="font-size:38px;margin-top:22px;color:var(--navy)">Your own firm, with us behind you.</div>
+      <div class="kicker" data-at="1.0" style="margin-top:56px;font-size:22px">lawgistics.my</div>
+    </div>
+  </div>
+
+  <div id="fade"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const eo=x=>{x=clamp(x);return 1-Math.pow(1-x,3)};
+const io=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2};
+const es=x=>{x=clamp(x);return x*x*(3-2*x)};
+const EASE={io,es};
+
+// 75 BPM: beat = 0.8s. Every cut lands on a beat.
+const TIMES=[["n1",0,5.6],["n2",5.6,7.2],["n3",7.2,11.2],["n4",11.2,14.4],["n5",14.4,17.6],["n6",17.6,20.8],
+  ["n7",20.8,24.0],["n8",24.0,26.4],["n9",26.4,28.8],["n10",28.8,31.2],["n11",31.2,34.4],["n12",34.4,40.8],["n13",40.8,44.0]];
+window.DURATION=44.0;
+const XD=0.45;
+const SC=TIMES.map(([id,a,b])=>{const el=$(id);return{el,a,b,dis:!!el.dataset.dis,kb:el.dataset.kb?JSON.parse(el.dataset.kb):null,img:el.querySelector("img"),anim:[...el.querySelectorAll("[data-at]")]}});
+// page markers, numbered over the scenes that carry a footer
+const paged=SC.filter(s=>s.el.querySelector(".pg"));paged.forEach((s,i)=>s.el.querySelector(".pg").textContent=`${String(i+1).padStart(2,"0")} / ${String(paged.length).padStart(2,"0")}`);
+SC.forEach(s=>{if(s.kb&&s.kb.ox!=null)s.img.style.transformOrigin=`${s.kb.ox}px ${s.kb.oy}px`;if(s.kb&&s.kb.top!=null)s.img.style.top=s.kb.top+"px"});
+
+function fade(el,l,a,d=.6,dy=12){const p=eo((l-a)/d);el.style.opacity=p;el.style.transform=`translateY(${(1-p)*dy}px)`}
+
+function render(t){
+  SC.forEach((s,k)=>{
+    const next=SC[k+1],tail=next&&next.dis?XD:0,vis=t>=s.a&&t<s.b+tail;
+    s.el.style.display=vis?"block":"none";if(!vis)return;
+    const l=t-s.a;s.el.style.opacity=s.dis?eo(l/XD):1;
+    if(s.kb){const kb=s.kb,p=(EASE[kb.ease]||io)(l/(s.b+tail-s.a));
+      s.img.style.transform=`translate(${kb.x0+(kb.x1-kb.x0)*p}px,${kb.y0+(kb.y1-kb.y0)*p}px) scale(${kb.s0+(kb.s1-kb.s0)*p})`}
+    s.anim.forEach(el=>{const a=+el.dataset.at;
+      if(el.classList.contains("hl")){[...el.querySelectorAll(".ln>span")].forEach((sp,i)=>{const p=eo((l-a-i*.16)/.8);sp.style.transform=`translateY(${(1-p)*108}%)`})}
+      else if(el.dataset.logo){const p=eo((l-a)/.9);el.style.opacity=p;el.style.transform=`scale(${.94+.06*p})`}
+      else if(el.classList.contains("kicker"))fade(el,l,a,.7,0);
+      else fade(el,l,a,.7,el.classList.contains("card")?20:12)})});
+  let k=1-eo(t/.6);if(t>43.2)k=Math.max(k,clamp((t-43.2)/.8));
+  $("fade").style.opacity=k}
+window.render=render;
+document.fonts.ready.then(()=>render(0));
+</script>
+</body></html>
