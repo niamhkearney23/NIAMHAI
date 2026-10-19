@@ -17,7 +17,7 @@ export function ReadingProgress() {
   }, []);
 
   return (
-    <div className="sticky top-[65px] z-30 hidden h-1 w-full bg-[var(--color-line)] sm:block">
+    <div className="sticky top-[65px] z-30 hidden h-1 w-full bg-[var(--color-border)] sm:block">
       <div
         className="h-full bg-[var(--color-accent)] transition-[width] duration-100"
         style={{ width: `${progress * 100}%` }}

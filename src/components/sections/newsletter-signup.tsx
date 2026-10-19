@@ -27,13 +27,13 @@ export function NewsletterSignup() {
 
   return (
     <div className="mx-auto max-w-xl text-center">
-      <p className="text-display text-3xl sm:text-4xl">I test a stupid amount of AI.</p>
-      <p className="mt-3 text-base text-[var(--color-ink)]/70 sm:text-lg">
+      <p className="text-2xl font-bold tracking-tight sm:text-3xl">I test a stupid amount of AI.</p>
+      <p className="mt-3 text-base text-[var(--color-muted)]">
         Once a week I&apos;ll send you the stuff that was actually worth keeping.
       </p>
 
       {status === "success" ? (
-        <p className="text-mono mt-6 text-sm font-semibold uppercase tracking-wide text-[var(--color-accent)]">
+        <p className="mt-6 text-sm font-semibold text-[var(--color-accent)]">
           You&apos;re officially in my AI rabbit hole.
         </p>
       ) : (
@@ -44,25 +44,25 @@ export function NewsletterSignup() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@email.com"
-            className="text-mono flex-1 rounded-full border border-[var(--color-line)] bg-[var(--color-paper)] px-5 py-3 text-sm outline-none focus:border-[var(--color-accent)]"
+            className="flex-1 rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2.5 text-sm outline-none focus:border-[var(--color-accent)]"
           />
           <button
             type="submit"
             disabled={status === "submitting"}
-            className="text-mono inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-accent)] px-6 py-3 text-xs font-bold uppercase tracking-wide text-[var(--color-cream)] transition-transform duration-150 hover:-translate-y-0.5 disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-[var(--color-accent)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-60"
           >
-            {status === "submitting" ? "Sending…" : "Send me the good stuff →"}
+            {status === "submitting" ? "Sending…" : "Send me the good stuff"}
           </button>
         </form>
       )}
 
       {status === "error" && (
-        <p className="text-mono mt-3 text-xs text-[var(--color-ink)]/50">
+        <p className="mt-3 text-xs text-[var(--color-muted)]">
           Couldn&apos;t save that just now — mind trying again in a bit?
         </p>
       )}
 
-      <p className="text-mono mt-4 text-xs text-[var(--color-ink)]/45">
+      <p className="mt-4 text-xs text-[var(--color-muted)]">
         No daily &quot;AI NEWS 🚨&quot;. Promise.
       </p>
     </div>

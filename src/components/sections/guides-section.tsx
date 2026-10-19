@@ -4,10 +4,10 @@ import { SectionHeading } from "@/components/ui/section-heading";
 
 export function GuidesSection() {
   return (
-    <section id="guides" className="border-b border-[var(--color-line)] px-5 py-16 sm:px-8 sm:py-24">
+    <section id="guides" className="border-b border-[var(--color-border)] px-5 py-16 sm:px-8 sm:py-24">
       <div className="mx-auto max-w-5xl">
         <SectionHeading
-          kicker="Bite-sized, tested, screenshot-worthy"
+          kicker="Bite-sized and tested"
           title="Recent"
           accentWord="free"
           suffix="guides"

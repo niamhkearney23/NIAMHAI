@@ -4,37 +4,25 @@ export function SectionHeading({
   accentWord,
   suffix,
   description,
-  tone = "light",
 }: {
   kicker?: string;
   title: string;
   accentWord?: string;
   suffix?: string;
   description?: string;
-  tone?: "light" | "dark";
 }) {
-  const textColor = tone === "dark" ? "text-[var(--color-cream)]" : "text-[var(--color-ink)]";
-  const dimColor = tone === "dark" ? "text-[var(--color-cream)]/60" : "text-[var(--color-ink)]/60";
-
   return (
     <div>
       {kicker && (
-        <p className="text-mono mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-accent)]">
-          {kicker}
-        </p>
+        <p className="mb-2 text-sm font-medium text-[var(--color-accent)]">{kicker}</p>
       )}
-      <h2 className={`text-display text-4xl sm:text-6xl ${textColor}`}>
+      <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
         {title}
-        {accentWord && (
-          <>
-            {" "}
-            <span className="text-accent-serif text-[1.05em] normal-case">{accentWord}</span>
-          </>
-        )}
+        {accentWord && <span className="text-[var(--color-accent)]"> {accentWord}</span>}
         {suffix && <> {suffix}</>}
       </h2>
       {description && (
-        <p className={`mt-4 max-w-xl text-base sm:text-lg ${dimColor}`}>{description}</p>
+        <p className="mt-3 max-w-xl text-base text-[var(--color-muted)]">{description}</p>
       )}
     </div>
   );

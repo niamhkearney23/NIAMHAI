@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export function CopyPrompt({
   prompt,
-  label = "PROMPT",
+  label = "Prompt",
 }: {
   prompt: string;
   label?: string;
@@ -22,31 +22,18 @@ export function CopyPrompt({
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-[var(--color-line-dark)] bg-[var(--color-black)] shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
-      <div className="flex items-center justify-between border-b border-[var(--color-line-dark)] px-4 py-2.5">
-        <div className="flex items-center gap-3">
-          <span className="flex gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-          </span>
-          <span className="text-mono text-[11px] uppercase tracking-[0.15em] text-[var(--color-cream)]/50">
-            {label}
-          </span>
-        </div>
+    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
+      <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-2">
+        <span className="text-xs font-medium text-[var(--color-muted)]">{label}</span>
         <button
           type="button"
           onClick={handleCopy}
-          className="text-mono inline-flex items-center gap-1.5 rounded-full border border-[var(--color-cream)]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--color-cream)] transition-colors duration-150 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+          className="text-xs font-medium text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]"
         >
-          {copied ? (
-            <span className="text-[var(--color-accent)]">Copied ✓</span>
-          ) : (
-            "Copy prompt"
-          )}
+          {copied ? "Copied ✓" : "Copy"}
         </button>
       </div>
-      <p className="text-mono px-5 py-6 text-sm leading-relaxed text-[var(--color-cream)] sm:text-base">
+      <p className="font-mono px-5 py-5 text-sm leading-relaxed text-[var(--color-ink)]">
         {prompt}
       </p>
     </div>

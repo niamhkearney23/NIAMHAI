@@ -3,10 +3,9 @@
 import { useEffect, useRef } from "react";
 import type { Demo } from "@/lib/demos";
 
-export function DemoCard({ demo, index }: { demo: Demo; index: number }) {
+export function DemoCard({ demo }: { demo: Demo }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canPreview = useRef(false);
-  const num = String(index + 1).padStart(2, "0");
 
   // The preview plays only while a mouse is over the card (or it has keyboard
   // focus), so it never runs without the visitor asking. Touch screens,
@@ -37,9 +36,9 @@ export function DemoCard({ demo, index }: { demo: Demo; index: number }) {
       onMouseLeave={pause}
       onFocus={play}
       onBlur={pause}
-      className="group flex flex-col overflow-hidden rounded-xl border border-[var(--color-line)] bg-[var(--color-paper)] transition-transform duration-200 hover:-translate-y-1"
+      className="group flex flex-col overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] transition-shadow hover:shadow-md"
     >
-      <div className="relative aspect-video overflow-hidden border-b border-[var(--color-line)] bg-[var(--color-cream-dim)]">
+      <div className="relative aspect-video overflow-hidden border-b border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
         {/* The still sits behind the video as a lazy image, rather than as the
             video's poster, so it only loads when the card is near the screen. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -65,24 +64,21 @@ export function DemoCard({ demo, index }: { demo: Demo; index: number }) {
           <source src={demo.preview.webm} type="video/webm" />
           <source src={demo.preview.mp4} type="video/mp4" />
         </video>
-        <span className="text-mono absolute left-3 top-3 rounded bg-[var(--color-black)]/85 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[var(--color-cream)]">
+        <span className="absolute left-3 top-3 rounded-md bg-[var(--color-ink)]/80 px-2 py-1 text-[11px] font-medium text-white">
           Concept demo
         </span>
       </div>
       <div className="flex flex-1 flex-col justify-between p-6">
         <div>
-          <div className="flex items-center gap-3">
-            <span className="text-mono text-sm font-bold text-[var(--color-accent)]">{num}</span>
-            <span className="text-mono text-[11px] uppercase tracking-[0.12em] text-[var(--color-ink)]/45">
-              {demo.kind}
-            </span>
-          </div>
-          <h4 className="text-display mt-3 text-xl sm:text-2xl">{demo.title}</h4>
-          <p className="mt-3 text-sm leading-relaxed text-[var(--color-ink)]/75">
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">
+            {demo.kind}
+          </p>
+          <h4 className="mt-3 text-lg font-semibold tracking-tight">{demo.title}</h4>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--color-muted)]">
             {demo.description}
           </p>
         </div>
-        <span className="text-mono mt-6 text-xs font-bold uppercase tracking-wide text-[var(--color-accent)] group-hover:underline">
+        <span className="mt-6 text-sm font-medium text-[var(--color-accent)] group-hover:underline">
           Try it live →
         </span>
       </div>
