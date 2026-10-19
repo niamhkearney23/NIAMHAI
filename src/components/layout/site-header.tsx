@@ -9,18 +9,15 @@ export function SiteHeader() {
           <Wordmark />
         </Link>
         <nav className="flex items-center gap-6">
-          <a
-            href="#guides"
-            className="underline-grow text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-ink)]"
-          >
+          <Link href="/#guides" className="underline-grow text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-ink)]">
             Guides
-          </a>
-          <a
-            href="#about"
-            className="underline-grow text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-ink)]"
-          >
+          </Link>
+          <Link href="/#work-with-me" className="underline-grow text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-ink)]">
+            Work
+          </Link>
+          <Link href="/#about" className="underline-grow text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-ink)]">
             About
-          </a>
+          </Link>
         </nav>
       </div>
     </header>
