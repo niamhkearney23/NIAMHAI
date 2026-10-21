@@ -31,40 +31,52 @@
   .lab{font-family:"IBM Plex Mono";font-size:20px;letter-spacing:4px;color:var(--faint-n);width:210px;flex:none}
   .v{font-family:"Instrument Sans";font-weight:500;font-size:36px}
   .note{font-family:"Instrument Sans";font-size:32px;color:var(--faint-n);margin-top:34px}
+
+  .h{font-size:104px}
+  .route{position:relative;margin-top:110px;height:120px}
+  .route .line{position:absolute;left:14px;right:14px;top:14px;height:1px}
+  .route .a,.route .b{position:absolute;top:0;width:28px;height:28px;border-radius:50%;box-sizing:border-box}
+  .route .a{left:0} .route .b{right:0}
+  .route .la,.route .lb,.route .mid{position:absolute;top:56px;font-family:"IBM Plex Mono";font-size:20px;letter-spacing:4px;text-transform:uppercase}
+  .route .la{left:0} .route .lb{right:0;text-align:right} .route .mid{left:50%;transform:translateX(-50%);top:-44px}
+  .navy .route .line{background:var(--line-n);background:rgba(241,235,222,.4)} .navy .route .a{border:1px solid var(--cream)} .navy .route .b{background:var(--peri)}
+  .navy .route .la,.navy .route .lb{color:var(--cream)} .navy .route .mid{color:var(--faint-n)}
+  .swipe{font-family:"IBM Plex Mono";font-size:19px;letter-spacing:4px;color:var(--peri);margin-left:28px}
 </style></head><body>
 
 <section class="s navy">
-  <div class="block" style="transform:translateY(-56%)">
-    <img class="photo" src="../../brand/src/img/02-coach.png">
-    <div class="k" style="margin-top:56px">Young lawyers meet · Johor Bahru</div>
-    <div class="h" style="font-size:104px">This could be you.</div>
+  <div class="block">
+    <div class="k">For Singapore lawyers · Johor Bahru</div>
+    <div class="h">Your clients already cross the Causeway.</div>
+    <div class="h" style="color:var(--peri)">You should too.</div>
+    <div class="route"><span class="mid">The Causeway</span><span class="line"></span><span class="a"></span><span class="b"></span><span class="la">Singapore</span><span class="lb">Johor Bahru</span></div>
   </div>
-  <div class="foot"><span class="pg">01 / 07</span><span class="wm">Lawgistics<i>.</i></span></div>
+  <div class="foot"><span class="pg">01 / 07<span class="swipe">SWIPE →</span></span><span class="wm">Lawgistics<i>.</i></span></div>
 </section>
 
 <section class="s cream">
   <div class="block">
-    <div class="k">The invitation</div>
-    <div class="h">We are hosting 10 young lawyers in Johor Bahru.</div>
-    <div class="h" style="color:var(--steel)">You are invited.</div>
+    <div class="k">The problem</div>
+    <div class="h">Cross-border matters need a lawyer on each side.</div>
+    <div class="h" style="color:var(--steel)">Meet yours.</div>
   </div>
   <div class="foot"><span class="pg">02 / 07</span><span class="wm">Lawgistics<i>.</i></span></div>
 </section>
 
 <section class="s navy">
   <div class="block">
-    <div class="k">The pickup</div>
-    <div class="h">We pick you up in Singapore.</div>
-    <div class="h">The coach does the rest.</div>
+    <div class="k">The room</div>
+    <div class="h">Ten young lawyers from both sides. One room.</div>
+    <div class="h">Referrals start with a name you trust.</div>
   </div>
   <div class="foot"><span class="pg">03 / 07</span><span class="wm">Lawgistics<i>.</i></span></div>
 </section>
 
 <section class="s cream">
   <div class="block">
-    <div class="k">The room</div>
-    <div class="h">Your peers are across the Causeway.</div>
-    <div class="h">So is your next referral.</div>
+    <div class="k">The trip</div>
+    <div class="h">We pick you up in Singapore. We bring you back.</div>
+    <div class="h">You do not drive. You do not pay.</div>
   </div>
   <div class="foot"><span class="pg">04 / 07</span><span class="wm">Lawgistics<i>.</i></span></div>
 </section>
@@ -72,7 +84,7 @@
 <section class="s peri">
   <div class="block">
     <div class="k">Young lawyers meet · Johor Bahru</div>
-    <div class="h" style="font-size:156px;font-weight:600;letter-spacing:-.02em;margin-top:44px">Cross the Causeway.</div>
+    <div class="h" style="font-size:168px;font-weight:600;letter-spacing:-.02em;margin-top:44px;line-height:1.02">Cross the Causeway.</div>
   </div>
   <div class="foot"><span class="pg">05 / 07</span><span class="wm">Lawgistics<i>.</i></span></div>
 </section>
@@ -80,20 +92,21 @@
 <section class="s navy">
   <div class="block">
     <div class="k">The details</div>
-    <div class="h" style="font-size:80px">Free coach from Singapore.</div>
+    <div class="h" style="font-size:88px">Ten seats. Free coach.</div>
     <div class="card">
       <div class="row"><span class="lab">DATE</span><span class="v">[Date]</span></div>
-      <div class="row"><span class="lab">VENUE</span><span class="v">[Venue], Johor Bahru</span></div>
       <div class="row"><span class="lab">PICKUP</span><span class="v">[Pickup point], [Time]</span></div>
+      <div class="row"><span class="lab">VENUE</span><span class="v">[Venue], Johor Bahru</span></div>
+      <div class="row"><span class="lab">RETURN</span><span class="v">Back in Singapore by [Time]</span></div>
       <div class="row"><span class="lab">REGISTER</span><span class="v">[Link]</span></div>
     </div>
-    <div class="note">Ten places only.</div>
+    <div class="note">Bring your passport.</div>
   </div>
   <div class="foot"><span class="pg">06 / 07</span><span class="wm">Lawgistics<i>.</i></span></div>
 </section>
 
 <section class="s cream">
-  <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center">
+  <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-54%);display:flex;flex-direction:column;align-items:center">
     <svg width="200" height="200" viewBox="0 0 220 220"><circle cx="110" cy="110" r="110" fill="#171B28"/><text x="86" y="152" text-anchor="middle" font-family="Newsreader" font-weight="600" font-size="148" fill="#F1EBDE">L</text><circle cx="146" cy="142" r="11" fill="#A8C0EA"/></svg>
     <div class="wm" style="font-size:88px;margin-top:52px">Lawgistics<i>.</i></div>
     <div style="font-family:'Instrument Sans';font-size:36px;margin-top:20px">Your own firm, with us behind you.</div>
