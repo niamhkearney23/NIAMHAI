@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* Junior is a separate app in /junior; keep its classes out of this site. */
+@source not "../../junior";
 
 :root {
   --color-bg: #ffffff;

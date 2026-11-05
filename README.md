@@ -3,6 +3,11 @@
 One-page editorial site for N1AMH AI — practical AI guides, cream/
 near-black/charcoal with one signal-orange accent.
 
+> **Also in this repo:** [`junior/`](junior/README.md) is Junior by
+> Lawgistics, a separate Next.js app that drafts marketing posts for lawyers.
+> It has its own dependencies and deploys as its own Vercel project (Root
+> Directory `junior`). This site's build ignores it.
+
 ## Stack
 
 - [Next.js](https://nextjs.org) (App Router, Turbopack)

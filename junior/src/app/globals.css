@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+/* Lawgistics brand. No gradients; borders instead of shadows. */
+:root {
+  --navy: #171b28;
+  --cream: #f1ebde;
+  --periwinkle: #a8c0ea;
+  --steel: #46648f;
+
+  --bg: var(--cream);
+  --surface: #f7f3ea;
+  --sunken: #e9e2d3;
+  --ink: var(--navy);
+  --ink-2: #353b4c;
+  --muted: #5c6272;
+  --line: #d6cdbb;
+  --line-strong: var(--navy);
+  --accent: var(--steel);
+  --accent-soft: #dde5f3;
+  --on-ink: var(--cream);
+  --danger: #9e3a2b;
+  --danger-soft: #f2dcd5;
+  --cheek: var(--periwinkle);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: var(--navy);
+    --surface: #1d2232;
+    --sunken: #131621;
+    --ink: var(--cream);
+    --ink-2: #d9d3c6;
+    --muted: #a3a9b8;
+    --line: #313849;
+    --line-strong: #8f9ab0;
+    --accent: var(--periwinkle);
+    --accent-soft: #26304a;
+    --on-ink: var(--navy);
+    --danger: #f0a493;
+    --danger-soft: #3a2427;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: var(--navy);
+  --surface: #1d2232;
+  --sunken: #131621;
+  --ink: var(--cream);
+  --ink-2: #d9d3c6;
+  --muted: #a3a9b8;
+  --line: #313849;
+  --line-strong: #8f9ab0;
+  --accent: var(--periwinkle);
+  --accent-soft: #26304a;
+  --on-ink: var(--navy);
+  --danger: #f0a493;
+  --danger-soft: #3a2427;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-ink: var(--on-ink);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-navy: var(--navy);
+  --color-cream: var(--cream);
+  --color-periwinkle: var(--periwinkle);
+  --color-steel: var(--steel);
+
+  --font-serif: var(--font-newsreader), Georgia, serif;
+  --font-sans: var(--font-instrument), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--periwinkle);
+  color: var(--navy);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Labels in IBM Plex Mono. In the components layer so colour utilities win. */
+@layer components {
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+}
+
+/* Junior's moods */
+@keyframes junior-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes junior-blink {
+  0%,
+  94%,
+  100% {
+    transform: scaleY(1);
+  }
+  97% {
+    transform: scaleY(0.1);
+  }
+}
+.junior-thinking {
+  animation: junior-bob 2.4s ease-in-out infinite;
+}
+.junior-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: junior-blink 6s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .junior-thinking,
+  .junior-eye {
+    animation: none;
+  }
+}
