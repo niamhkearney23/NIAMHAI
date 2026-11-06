@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CopyButton } from "@/components/copy-button";
 import { MascotMessage } from "@/components/mascot";
-import { ButtonLink, PageHeader } from "@/components/ui";
+import { ButtonLink, buttonClass, PageHeader } from "@/components/ui";
 import { CHANNEL_LABEL, STATUS_LABEL, STATUSES } from "@/lib/channels";
 import { requireProfile } from "@/lib/dal";
 import { excerpt, queueItems, type QueueItem } from "@/lib/queries";
@@ -89,7 +89,7 @@ function QueueCard({ item, timezone }: { item: QueueItem; timezone: string }) {
     item.status === "scheduled" && item.scheduled_for
       ? formatShort(item.scheduled_for, timezone)
       : item.status === "posted" && item.posted_at
-        ? `Posted ${formatShort(item.posted_at, timezone)}`
+        ? `${item.published_via === "junior" ? "Published" : "Posted"} ${formatShort(item.posted_at, timezone)}`
         : item.status === "approved" && item.approved_at
           ? `Approved ${formatShort(item.approved_at, timezone)}`
           : `Drafted ${formatShort(item.updated_at, timezone)}`;
@@ -98,7 +98,11 @@ function QueueCard({ item, timezone }: { item: QueueItem; timezone: string }) {
   return (
     <article className="rounded-[4px] border border-line bg-surface p-3.5">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <span className="label text-accent">{CHANNEL_LABEL[item.channel]}</span>
+        <span className="flex items-baseline gap-2">
+          <span className="label text-accent">{CHANNEL_LABEL[item.channel]}</span>
+          {item.publish_state === "failed" ? <span className="label text-danger">Needs attention</span> : null}
+          {item.publish_state === "publishing" ? <span className="label">Publishing</span> : null}
+        </span>
         <span className="font-mono text-[11px] whitespace-nowrap text-muted">{when}</span>
       </div>
       <Link href={`/briefs/${item.brief_id}?channel=${item.channel}`} className="mt-2 block group">
@@ -110,6 +114,11 @@ function QueueCard({ item, timezone }: { item: QueueItem; timezone: string }) {
           {item.status === "to_review" ? "Review" : "Open"}
         </ButtonLink>
         {item.status !== "to_review" ? <CopyButton text={copyText} /> : null}
+        {item.external_url ? (
+          <a href={item.external_url} target="_blank" rel="noreferrer" className={buttonClass("ghost", "sm")}>
+            View live
+          </a>
+        ) : null}
       </div>
     </article>
   );

@@ -199,12 +199,12 @@ export function ProfileForm({ profile, mode }: { profile: Profile; mode: "onboar
         </fieldset>
       ) : null}
 
-      {show(3) ? (
+      {stepped && show(3) ? (
         <fieldset className="space-y-5">
           <legend className="mb-4 font-serif text-2xl text-ink">Accounts</legend>
           <p className="text-[15px] text-ink-2">
-            Junior will publish approved posts for you once your accounts are connected. Until then, every approved post
-            has copy buttons so you can paste it in yourself.
+            Next, connect the accounts Junior should publish to. Junior only ever publishes what you approve, at the time
+            you pick. You can skip this and copy posts by hand.
           </p>
           <ul className="divide-y divide-line rounded-[4px] border border-line bg-surface">
             {[
@@ -217,7 +217,7 @@ export function ProfileForm({ profile, mode }: { profile: Profile; mode: "onboar
                   <p className="text-[15px] font-medium text-ink">{name}</p>
                   <p className="text-sm text-muted">{detail}</p>
                 </div>
-                <span className="label">Coming soon</span>
+                <span className="label">Next step</span>
               </li>
             ))}
           </ul>
@@ -241,7 +241,7 @@ export function ProfileForm({ profile, mode }: { profile: Profile; mode: "onboar
           </Button>
         ) : (
           <Button key="submit" type="submit" disabled={pending || (stepped && !stepValid.every(Boolean))}>
-            {pending ? "Saving" : stepped ? "Finish and start drafting" : "Save changes"}
+            {pending ? "Saving" : stepped ? "Save and connect accounts" : "Save changes"}
           </Button>
         )}
       </div>

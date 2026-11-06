@@ -13,10 +13,14 @@ export interface QueueItem {
   approved_at: string | null;
   posted_at: string | null;
   updated_at: string;
+  publish_state: "publishing" | "failed" | null;
+  external_url: string | null;
+  published_via: "junior" | "manual" | null;
   brief_title: string;
 }
 
-const COLUMNS = "id, brief_id, channel, status, title, body, scheduled_for, approved_at, posted_at, updated_at, briefs(title)";
+const COLUMNS =
+  "id, brief_id, channel, status, title, body, scheduled_for, approved_at, posted_at, updated_at, publish_state, external_url, published_via, briefs(title)";
 
 type Row = Omit<QueueItem, "brief_title"> & { briefs: { title: string } | { title: string }[] | null };
 

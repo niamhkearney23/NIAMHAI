@@ -18,8 +18,22 @@ export function siteUrl(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 }
 
+/**
+ * Junior's own Claude key. JUNIOR_ANTHROPIC_API_KEY comes first so a key meant
+ * for the app is never confused with one a developer tool on the same machine
+ * uses. ANTHROPIC_API_KEY is the usual name on a host such as Vercel.
+ */
+export function anthropicApiKey(): string | undefined {
+  return process.env.JUNIOR_ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY || undefined;
+}
+
+/** Always the public API unless Junior is told otherwise (tests use a mock). */
+export function anthropicBaseUrl(): string {
+  return process.env.JUNIOR_ANTHROPIC_BASE_URL || "https://api.anthropic.com";
+}
+
 export function anthropicConfigured(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN);
+  return Boolean(anthropicApiKey());
 }
 
 /** Placeholder drafts for local development without an Anthropic key. */

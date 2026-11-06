@@ -65,6 +65,13 @@ export interface Post {
   approved_at: string | null;
   approved_by: string | null;
   posted_at: string | null;
+  publish_state: "publishing" | "failed" | null;
+  publish_error: string | null;
+  publish_retryable: boolean;
+  publish_attempts: number;
+  next_attempt_at: string | null;
+  external_url: string | null;
+  published_via: "junior" | "manual" | null;
   created_at: string;
   updated_at: string;
 }
@@ -86,7 +93,10 @@ export interface ApprovalLogEntry {
     | "unscheduled"
     | "marked_posted"
     | "check_ticked"
-    | "check_unticked";
+    | "check_unticked"
+    | "publish_requested"
+    | "published"
+    | "publish_failed";
   channel: Channel | null;
   content_hash: string | null;
   detail: Record<string, unknown>;

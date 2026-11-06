@@ -1,7 +1,10 @@
 "use server";
 
 import { z } from "zod";
+import { CHANNEL_LABEL } from "@/lib/channels";
+import { listConnections, type Provider } from "@/lib/connections";
 import { getProfile, requireUser } from "@/lib/dal";
+import { runPublisher } from "@/lib/publish/publisher";
 import { runRuleChecks } from "@/lib/guardrails";
 import { createClient } from "@/lib/supabase/server";
 import { zonedInputToUtc } from "@/lib/time";
@@ -13,7 +16,7 @@ export interface PostResult {
 }
 
 const POST_COLUMNS =
-  "id, brief_id, channel, status, title, body, cards, checks, rule_checks, check_acks, scheduled_for, approved_at, approved_by, posted_at, created_at, updated_at";
+  "id, brief_id, channel, status, title, body, cards, checks, rule_checks, check_acks, scheduled_for, approved_at, approved_by, posted_at, publish_state, publish_error, publish_retryable, publish_attempts, next_attempt_at, external_url, published_via, created_at, updated_at";
 
 const Id = z.uuid();
 
@@ -131,4 +134,49 @@ export async function markPosted(postId: string) {
 
 export async function returnToReview(postId: string) {
   return simple("return_to_review", postId, "Junior could not withdraw the approval.");
+}
+
+// Publishing runs straight away, inside this request, using the same
+// publisher as the scheduled job.
+async function publishAndReload(postId: string): Promise<PostResult> {
+  try {
+    await runPublisher({ postId, limit: 1 });
+  } catch (error) {
+    console.error("Publisher failed", error);
+  }
+  const { post } = await loadPost(postId);
+  return post ? { post: toPost(post as unknown as Record<string, unknown>) } : { error: "Post not found." };
+}
+
+async function requireConnection(postId: string): Promise<string | null> {
+  const { post } = await loadPost(postId);
+  if (!post) return "Post not found.";
+  if (post.channel === "newsletter") return "Newsletters are not sent automatically yet. Copy it into your email tool.";
+  const connections = await listConnections();
+  if (connections[post.channel as Provider]?.status !== "active") {
+    return `Connect ${CHANNEL_LABEL[post.channel]} in Settings first, or copy the post and publish it yourself.`;
+  }
+  return null;
+}
+
+export async function publishNow(postId: string): Promise<PostResult> {
+  await requireUser();
+  if (!Id.safeParse(postId).success) return { error: "Post not found." };
+  const blocked = await requireConnection(postId);
+  if (blocked) return { error: blocked };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("publish_now", { p_post_id: postId });
+  if (error) return { error: friendly(error, "Junior could not publish that post.") };
+  return publishAndReload(postId);
+}
+
+export async function retryPublish(postId: string): Promise<PostResult> {
+  await requireUser();
+  if (!Id.safeParse(postId).success) return { error: "Post not found." };
+  const blocked = await requireConnection(postId);
+  if (blocked) return { error: blocked };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("retry_publish", { p_post_id: postId });
+  if (error) return { error: friendly(error, "Junior could not retry that post.") };
+  return publishAndReload(postId);
 }

@@ -2,7 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { supabasePublishableKey, supabaseUrl } from "@/lib/env";
 
-const PUBLIC_PATHS = ["/login", "/auth", "/privacy"];
+// /api/cron checks its own shared secret.
+const PUBLIC_PATHS = ["/login", "/auth", "/privacy", "/api/cron"];
 
 function isPublic(pathname: string) {
   return pathname === "/" || PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Notice, PageHeader } from "@/components/ui";
 import { CHANNELS } from "@/lib/channels";
+import { listConnections } from "@/lib/connections";
 import { requireProfile } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
 import { formatDateTime, utcToZonedInput } from "@/lib/time";
@@ -9,6 +10,8 @@ import type { Brief, Channel, Post } from "@/lib/types";
 import { BriefWorkspace } from "./brief-workspace";
 
 export const metadata: Metadata = { title: "Review" };
+// "Publish now" runs the publisher inside the request; an Instagram carousel can take a minute.
+export const maxDuration = 300;
 
 const KIND_LABEL = { text: "Pasted text", pdf: "PDF", audio: "Voice note" } as const;
 
@@ -24,7 +27,7 @@ export default async function BriefPage({ params, searchParams }: PageProps<"/br
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const supabase = await createClient();
-  const [{ data: brief }, { data: posts }] = await Promise.all([
+  const [{ data: brief }, { data: posts }, connections] = await Promise.all([
     supabase
       .from("briefs")
       .select("id, title, source_kind, source_name, source_text, redactions, pii_kept, drafted_with, created_at")
@@ -33,9 +36,10 @@ export default async function BriefPage({ params, searchParams }: PageProps<"/br
     supabase
       .from("posts")
       .select(
-        "id, brief_id, channel, status, title, body, cards, checks, rule_checks, check_acks, scheduled_for, approved_at, approved_by, posted_at, created_at, updated_at",
+        "id, brief_id, channel, status, title, body, cards, checks, rule_checks, check_acks, scheduled_for, approved_at, approved_by, posted_at, publish_state, publish_error, publish_retryable, publish_attempts, next_attempt_at, external_url, published_via, created_at, updated_at",
       )
       .eq("brief_id", id),
+    listConnections(),
   ]);
   if (!brief || !posts?.length) notFound();
 
@@ -75,6 +79,7 @@ export default async function BriefPage({ params, searchParams }: PageProps<"/br
         timezone={profile.timezone}
         defaultSchedule={tomorrowAtNine(profile.timezone)}
         firm={profile.firm}
+        connections={connections}
       />
     </div>
   );

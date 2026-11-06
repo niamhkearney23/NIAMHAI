@@ -11,14 +11,14 @@ set to `junior`.
 
 ## Status
 
-**Phase 1 (this release):** sign-in, onboarding, drafting, review with checks,
-approval log, queue, week calendar, copy buttons. No auto-posting: approved
-posts are copied and published by hand, then marked as posted.
-
-- Phase 2: Meta (Facebook Page, Instagram) and LinkedIn connections, encrypted
-  tokens, scheduled publishing.
-- Phase 3: newsletter sending with Resend, 1080 x 1350 carousel images in the
-  lawyer's brand colours, results per post.
+- **Phase 1:** sign-in, onboarding, drafting, review with checks, approval
+  log, queue, week calendar, copy buttons.
+- **Phase 2 (this release):** Facebook Page, Instagram and LinkedIn
+  connections with encrypted tokens, scheduled publishing, publish now, retries.
+  Instagram carousels are rendered as 1080 x 1350 JPEGs in Lawgistics colours.
+- Phase 3: newsletter sending with Resend, a carousel builder in the lawyer's
+  own brand colours, results per post. Until then newsletters are copied by
+  hand.
 
 ## Stack
 
@@ -28,6 +28,10 @@ posts are copied and published by hand, then marked as posted.
 - Claude (`claude-opus-5-5`) for drafting, with structured JSON output
 - OpenAI speech-to-text for voice notes (Claude does not take audio)
 - `unpdf` for PDF text
+- Meta Graph API (v26.0) for Facebook Page posts and Instagram carousels
+- LinkedIn Posts API for member posts
+- `next/og` and `sharp` to render carousel cards
+- Supabase `pg_cron` and `pg_net` to wake the publisher every minute
 
 ## How it works
 
@@ -85,6 +89,28 @@ NRIC numbers. Emojis, dashes and spelling have a "Fix it for me" button.
 
 `supabase/tests/workflow_test.sql` proves each of these (24 pgTAP tests).
 
+### Connections and publishing
+
+- **Connecting:** Facebook Login (with a Page picker when the lawyer manages
+  several Pages; the Page's linked Instagram professional account comes with
+  it) and LinkedIn sign-in. A random state value in an httpOnly cookie ties
+  each callback to the browser that started it.
+- **Tokens:** encrypted with AES-256-GCM (`src/lib/crypto.ts`) using
+  `TOKEN_ENCRYPTION_KEY`, bound to the owner and provider so a ciphertext
+  cannot be moved to another row. The token columns cannot be read by
+  signed-in users at all; only the server's secret key can. Tokens never reach
+  the browser.
+- **Publishing:** every minute, `pg_cron` checks for due posts and, if there
+  are any, calls `/api/cron/publish` with `CRON_SECRET`. The publisher claims
+  due posts with a row lock (`claim_due_posts`), so nothing goes out twice, and
+  only claims posts whose text still matches the approved fingerprint.
+- **Failures:** outages are retried after 2, 4, 8 and 16 minutes. An expired
+  token marks the account as needing a reconnect. A publish that never
+  finished is not retried automatically, because it may already be live; the
+  lawyer checks and retries by hand.
+- **Logging:** "Asked to publish", "Published by Junior" (with the live link)
+  and "Publishing failed" join the approval log.
+
 ### Privacy (PDPA 2010 and PDPA 2012)
 
 - The draft screen scans pasted text for client names, MyKad and NRIC/FIN
@@ -98,7 +124,7 @@ NRIC numbers. Emojis, dashes and spelling have a "Fix it for me" button.
   link.
 - `/privacy` is a draft notice. Items in [brackets] need Lawgistics' details
   and a review by counsel before launch.
-- Social tokens arrive in phase 2 and will be stored encrypted.
+- Social tokens are stored encrypted and are never readable from the browser.
 
 ## Run it locally
 
@@ -114,15 +140,42 @@ npm run dev
 
 Sign-in emails land in Mailpit at http://127.0.0.1:54324.
 
-Without `ANTHROPIC_API_KEY`, set `JUNIOR_DEMO_DRAFTS=1` in `.env.local` to get
+Without an Anthropic key, set `JUNIOR_DEMO_DRAFTS=1` in `.env.local` to get
 placeholder drafts built from your text, so you can click through the flow.
-Demo drafts are labelled everywhere and never run in production.
+Demo drafts are labelled everywhere and never run in production. The key can
+be `ANTHROPIC_API_KEY` or `JUNIOR_ANTHROPIC_API_KEY` (use the second on a
+machine where another tool already uses the first).
+
+### Publishing locally without real apps
+
+`scripts/mock-platforms.mjs` stands in for Facebook Login, the Graph API,
+LinkedIn sign-in and the Posts API, and shows what was "published" at
+http://localhost:4010/__mock/feed.
+
+```bash
+node scripts/mock-platforms.mjs
+```
+
+Then in `.env.local`: `META_APP_ID=mock-app`, `META_APP_SECRET=mock-secret`,
+`LINKEDIN_CLIENT_ID=mock-client`, `LINKEDIN_CLIENT_SECRET=mock-secret`, and
+`META_GRAPH_URL`, `META_DIALOG_URL`, `LINKEDIN_API_URL`, `LINKEDIN_OAUTH_URL`
+all set to `http://localhost:4010`. Add `SUPABASE_SECRET_KEY` (printed by
+`supabase start`), a `TOKEN_ENCRYPTION_KEY` and a `CRON_SECRET`. To let the
+local database wake the publisher:
+
+```sql
+select vault.create_secret('http://host.docker.internal:3000/api/cron/publish', 'junior_publish_url');
+select vault.create_secret('<CRON_SECRET>', 'junior_cron_secret');
+```
+
+and run the dev server with `npx next dev -H 0.0.0.0`.
 
 ## Tests
 
 ```bash
-npm test                    # unit tests: privacy scan, house rules, time zones, Claude call (mocked API)
-npx supabase test db        # database rules
+npm test                    # 45 unit tests: privacy scan, house rules, time zones, encryption,
+                            # card rendering, Claude call and Meta/LinkedIn clients (mocked APIs)
+npx supabase test db        # 46 database tests: approvals, publishing, token privacy
 npm run lint && npm run typecheck
 ```
 
@@ -137,7 +190,22 @@ npm run lint && npm run typecheck
 4. Set up custom SMTP for auth emails (Resend works). Supabase's built-in
    mailer is rate limited.
 5. On Vercel: Root Directory `junior`, and the variables in `.env.example`.
-   Drafting can take up to a minute, so the draft route allows 300 seconds.
+   Drafting and publishing can take up to a minute, so those routes allow 300
+   seconds.
+6. **Meta app** (developers.facebook.com): a Business app with Facebook Login
+   for Business. Redirect URI `https://<app>/api/connect/meta/callback`.
+   Permissions: `pages_show_list`, `pages_read_engagement`,
+   `pages_manage_posts`, `instagram_basic`, `instagram_content_publish`,
+   `business_management`. Until App Review approves them, only people with a
+   role on the app can connect. Business verification is usually required.
+7. **LinkedIn app** (linkedin.com/developers): add "Sign In with LinkedIn
+   using OpenID Connect" and "Share on LinkedIn". Redirect URI
+   `https://<app>/api/connect/linkedin/callback`. LinkedIn tokens last 60
+   days; Junior shows the date and asks the lawyer to reconnect.
+8. **The publisher:** in the Supabase SQL editor, store the app URL and
+   `CRON_SECRET` in Vault (the two `vault.create_secret` lines above, with the
+   live URL). The migration already schedules the job. On Vercel Pro you can
+   use Vercel Cron on `/api/cron/publish` instead.
 
 ## Layout
 
@@ -147,4 +215,8 @@ npm run lint && npm run typecheck
   profile and approval log
 - `src/lib/junior`: prompt, schema, Claude call, demo drafts
 - `src/lib/guardrails.ts`, `src/lib/pii.ts`: house rules and the privacy scan
+- `src/lib/platforms`: Meta and LinkedIn clients; `src/lib/connections.ts`:
+  encrypted token storage; `src/lib/publish`: publisher and card renderer
+- `src/app/api/connect`, `src/app/api/cron/publish`: OAuth and the publisher
+- `scripts/mock-platforms.mjs`: local stand-in for Meta and LinkedIn
 - `src/components/mascot.tsx`: Junior (idle, thinking, happy)

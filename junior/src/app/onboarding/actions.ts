@@ -77,7 +77,7 @@ export async function saveProfile(_prev: ProfileFormState, formData: FormData): 
     return { error: "Junior could not save your details. Try again." };
   }
 
-  if (onboarding) redirect("/draft");
+  if (onboarding) redirect("/settings?welcome=1#connections");
   refresh();
   return { saved: true };
 }

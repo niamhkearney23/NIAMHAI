@@ -64,9 +64,10 @@ beforeAll(async () => {
     });
   });
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
-  process.env.ANTHROPIC_BASE_URL = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-  process.env.ANTHROPIC_API_KEY = "test-key";
-  delete process.env.ANTHROPIC_AUTH_TOKEN;
+  process.env.JUNIOR_ANTHROPIC_BASE_URL = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  process.env.JUNIOR_ANTHROPIC_API_KEY = "test-key";
+  // A base URL meant for some other tool must be ignored.
+  process.env.ANTHROPIC_BASE_URL = "http://127.0.0.1:9";
 });
 
 afterAll(() => server.close());
@@ -86,6 +87,8 @@ describe("draftPosts", () => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the captured JSON body
     const body = lastRequest!.body as Record<string, any>;
+    const auth = lastRequest!.headers["x-api-key"] ?? lastRequest!.headers.authorization;
+    expect(String(auth)).toMatch(/^(Bearer )?test-key$/);
     expect(body.model).toBe("claude-opus-5-5");
     expect(body.stream).toBe(true);
     expect(body.fallbacks).toBe("default");

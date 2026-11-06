@@ -1,16 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { CopyButton } from "@/components/copy-button";
 import { MascotMessage } from "@/components/mascot";
 import { Badge, Button, Notice, inputClass } from "@/components/ui";
 import { CHANNEL_LABEL, PLATFORM_LIMITS, STATUS_LABEL } from "@/lib/channels";
 import { applyFix, openChecks, runRuleChecks } from "@/lib/guardrails";
-import { formatDateTime } from "@/lib/time";
+import type { ConnectionSummary } from "@/lib/connections";
+import { formatDateTime, formatTime } from "@/lib/time";
 import type { Card, Check, Post, PostContent, TimeZone } from "@/lib/types";
 import {
   approvePost,
   markPosted,
+  publishNow,
+  retryPublish,
   returnToReview,
   savePost,
   schedulePost,
@@ -30,7 +34,9 @@ export function PostEditor({
   timezone,
   defaultSchedule,
   firm,
+  connection,
 }: {
+  connection: ConnectionSummary | null;
   post: Post;
   onChange: (post: Post) => void;
   timezone: TimeZone;
@@ -42,11 +48,16 @@ export function PostEditor({
   const [flash, setFlash] = useState<string | null>(null);
   const [when, setWhen] = useState(defaultSchedule);
   const [busy, startTransition] = useTransition();
+  const [confirmNow, setConfirmNow] = useState(false);
 
   const saved: PostContent = { title: post.title, body: post.body, cards: post.cards };
   const dirty = !sameContent(draft, saved);
   const editable = post.status !== "posted";
   const approvedLike = post.status === "approved" || post.status === "scheduled";
+  const channelName = CHANNEL_LABEL[post.channel];
+  const autoPublish = post.channel !== "newsletter" && connection?.status === "active";
+  const publishing = post.publish_state === "publishing";
+  const failed = post.publish_state === "failed";
 
   const liveRules = useMemo(() => runRuleChecks({ channel: post.channel, ...draft }), [post.channel, draft]);
   const allChecks = [...post.checks, ...liveRules];
@@ -65,6 +76,7 @@ export function PostEditor({
         setError(result.error);
         onError?.();
       }
+      setConfirmNow(false);
       if (result.post) {
         onChange(result.post);
         // Only a save replaces what is in the editor; other actions leave edits alone.
@@ -111,12 +123,16 @@ export function PostEditor({
       {/* Editor */}
       <div className="min-w-0 space-y-6">
         <div className="flex flex-wrap items-center gap-3">
-          <Badge tone={post.status === "to_review" ? "plain" : post.status === "posted" ? "ink" : "accent"}>
-            {STATUS_LABEL[post.status]}
+          <Badge tone={post.publish_state === "failed" ? "danger" : post.status === "to_review" ? "plain" : post.status === "posted" ? "ink" : "accent"}>
+            {post.publish_state === "failed" ? "Needs attention" : STATUS_LABEL[post.status]}
           </Badge>
           <span className="text-sm text-muted">
-            {post.status === "posted" && post.posted_at
-              ? `Posted ${formatDateTime(post.posted_at, timezone)}`
+            {post.publish_state === "failed"
+              ? "Publishing did not go through. See the panel for what to do."
+              : post.publish_state === "publishing"
+                ? `Publishing to ${channelName} now`
+                : post.status === "posted" && post.posted_at
+              ? `${post.published_via === "junior" ? "Published by Junior" : "Posted"} ${formatDateTime(post.posted_at, timezone)}`
               : post.status === "scheduled" && post.scheduled_for
                 ? `Scheduled for ${formatDateTime(post.scheduled_for, timezone)}`
                 : post.status === "approved" && post.approved_at
@@ -319,48 +335,110 @@ export function PostEditor({
 
           {approvedLike ? (
             <>
-              <h3 className="font-serif text-lg text-ink">{post.status === "scheduled" ? "Scheduled" : "When should it go out?"}</h3>
-              {post.status === "scheduled" && post.scheduled_for ? (
+              <h3 className="font-serif text-lg text-ink">
+                {publishing ? `Publishing to ${channelName}` : post.status === "scheduled" ? "Scheduled" : "When should it go out?"}
+              </h3>
+              {post.status === "scheduled" && post.scheduled_for && !publishing ? (
                 <p className="text-sm text-ink-2">{formatDateTime(post.scheduled_for, timezone)}</p>
               ) : null}
-              <div className="space-y-2">
-                <label htmlFor={`${post.id}-when`} className="label">
-                  {post.status === "scheduled" ? "Change time" : "Date and time"} ({timezone === "Asia/Singapore" ? "Singapore" : "Kuala Lumpur"})
-                </label>
-                <input
-                  id={`${post.id}-when`}
-                  type="datetime-local"
-                  value={when}
-                  onChange={(e) => setWhen(e.target.value)}
-                  className={inputClass}
-                />
-                <Button type="button" className="w-full" disabled={busy || dirty || !when} onClick={() => run(() => schedulePost(post.id, when), "scheduled")}>
-                  {post.status === "scheduled" ? "Reschedule" : "Schedule"}
+
+              {failed ? (
+                <Notice tone="danger">
+                  <p className="font-medium">Publishing did not go through.</p>
+                  <p className="mt-1">{post.publish_error}</p>
+                  {post.publish_retryable && post.next_attempt_at ? (
+                    <p className="mt-1">Junior will try again at {formatTime(post.next_attempt_at, timezone)}.</p>
+                  ) : null}
+                </Notice>
+              ) : null}
+              {failed && autoPublish ? (
+                <Button type="button" className="w-full" disabled={busy} onClick={() => run(() => retryPublish(post.id))}>
+                  {busy ? "Publishing" : "Retry now"}
                 </Button>
-              </div>
-              <p className="text-xs text-muted">
-                Auto-posting arrives once your accounts are connected. For now, copy the post and publish it at this time,
-                then mark it as posted.
-              </p>
-              <div className="flex flex-wrap gap-2 border-t border-line pt-4">
-                <Button type="button" size="sm" variant="secondary" disabled={busy || dirty} onClick={() => run(() => markPosted(post.id), "posted")}>
-                  Mark as posted
-                </Button>
-                {post.status === "scheduled" ? (
-                  <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={() => run(() => unschedulePost(post.id))}>
-                    Unschedule
+              ) : null}
+
+              {publishing || (busy && confirmNow) ? (
+                <MascotMessage mood="thinking" title="Publishing" size={44}>
+                  Sending the approved version to {channelName}.
+                </MascotMessage>
+              ) : (
+                <div className="space-y-2">
+                  <label htmlFor={`${post.id}-when`} className="label">
+                    {post.status === "scheduled" ? "Change time" : "Date and time"} ({timezone === "Asia/Singapore" ? "Singapore" : "Kuala Lumpur"})
+                  </label>
+                  <input
+                    id={`${post.id}-when`}
+                    type="datetime-local"
+                    value={when}
+                    onChange={(e) => setWhen(e.target.value)}
+                    className={inputClass}
+                  />
+                  <Button type="button" className="w-full" disabled={busy || dirty || !when} onClick={() => run(() => schedulePost(post.id, when), "scheduled")}>
+                    {post.status === "scheduled" ? "Reschedule" : "Schedule"}
                   </Button>
-                ) : null}
-                <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={() => run(() => returnToReview(post.id))}>
-                  Withdraw approval
-                </Button>
-              </div>
+                </div>
+              )}
+
+              <p className="text-xs text-muted">
+                {autoPublish ? (
+                  `Junior will publish to ${connection!.display_name} at the time you pick, and log it.`
+                ) : post.channel === "newsletter" ? (
+                  "Newsletter sending arrives in the next release. Copy it into your email tool, then mark it as posted."
+                ) : (
+                  <>
+                    <Link href="/settings#connections" className="text-accent underline underline-offset-4">
+                      Connect {channelName}
+                    </Link>{" "}
+                    and Junior will publish at the time you pick. Until then, copy it, publish it yourself, then mark it as
+                    posted.
+                  </>
+                )}
+              </p>
+
+              {!publishing ? (
+                <div className="flex flex-wrap gap-2 border-t border-line pt-4">
+                  {autoPublish && !failed ? (
+                    confirmNow ? (
+                      <>
+                        <Button type="button" size="sm" disabled={busy || dirty} onClick={() => run(() => publishNow(post.id))}>
+                          Publish to {channelName} now
+                        </Button>
+                        <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={() => setConfirmNow(false)}>
+                          Cancel
+                        </Button>
+                      </>
+                    ) : (
+                      <Button type="button" size="sm" variant="secondary" disabled={busy || dirty} onClick={() => setConfirmNow(true)}>
+                        Publish now
+                      </Button>
+                    )
+                  ) : null}
+                  <Button type="button" size="sm" variant="secondary" disabled={busy || dirty} onClick={() => run(() => markPosted(post.id), "posted")}>
+                    Mark as posted
+                  </Button>
+                  {post.status === "scheduled" ? (
+                    <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={() => run(() => unschedulePost(post.id))}>
+                      Unschedule
+                    </Button>
+                  ) : null}
+                  <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={() => run(() => returnToReview(post.id))}>
+                    Withdraw approval
+                  </Button>
+                </div>
+              ) : null}
             </>
           ) : null}
 
           {post.status === "posted" ? (
-            <MascotMessage mood="happy" title="Posted" size={44}>
-              {post.posted_at ? formatDateTime(post.posted_at, timezone) : null}. Junior keeps this version on record.
+            <MascotMessage mood="happy" title={post.published_via === "junior" ? `Published to ${channelName}` : "Posted"} size={44}>
+              {post.posted_at ? `${formatDateTime(post.posted_at, timezone)}. ` : null}
+              {post.external_url ? (
+                <a href={post.external_url} target="_blank" rel="noreferrer" className="text-accent underline underline-offset-4">
+                  View it on {channelName}
+                </a>
+              ) : (
+                "Junior keeps this version on record."
+              )}
             </MascotMessage>
           ) : null}
 

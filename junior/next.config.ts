@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   // unpdf ships its own PDF.js build; keep it out of the server bundle.
   serverExternalPackages: ["unpdf"],
+  // Fonts read from disk when rendering carousel cards for Instagram.
+  outputFileTracingIncludes: {
+    "/api/cron/publish": ["./src/assets/fonts/**"],
+    "/briefs/[id]": ["./src/assets/fonts/**"],
+  },
   experimental: {
     serverActions: {
       // Pasted judgments can be long. Uploads go straight to storage, not here.

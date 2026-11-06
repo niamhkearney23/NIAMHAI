@@ -1,7 +1,7 @@
 import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { anthropicConfigured, demoDraftsEnabled } from "@/lib/env";
+import { anthropicApiKey, anthropicBaseUrl, anthropicConfigured, demoDraftsEnabled } from "@/lib/env";
 import type { Profile, SourceKind } from "@/lib/types";
 import { demoDrafts } from "./demo";
 import { lawyerContext, SYSTEM_PROMPT, sourceMessage } from "./prompt";
@@ -41,7 +41,9 @@ export async function draftPosts(profile: Profile, kind: SourceKind, source: str
     throw new DraftError("Drafting is not set up yet. Add an Anthropic API key to the server settings.");
   }
 
-  const client = new Anthropic();
+  // Explicit key and URL: never pick up credentials or a base URL meant for
+  // another tool from the environment.
+  const client = new Anthropic({ apiKey: anthropicApiKey(), authToken: null, baseURL: anthropicBaseUrl() });
 
   try {
     const stream = client.beta.messages.stream({
