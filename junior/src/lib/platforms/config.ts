@@ -8,6 +8,9 @@ const trim = (u: string) => u.replace(/\/$/, "");
 export const meta = {
   appId: () => process.env.META_APP_ID ?? "",
   appSecret: () => process.env.META_APP_SECRET ?? "",
+  // Facebook Login for Business: the configuration created in the app
+  // dashboard. When set, it replaces the scope list in the login dialog.
+  loginConfigId: () => process.env.META_LOGIN_CONFIG_ID ?? "",
   version: () => process.env.META_GRAPH_VERSION || "v26.0",
   graphUrl: () => trim(process.env.META_GRAPH_URL || "https://graph.facebook.com"),
   dialogUrl: () => trim(process.env.META_DIALOG_URL || "https://www.facebook.com"),

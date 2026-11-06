@@ -98,6 +98,14 @@ describe("Facebook and Instagram", () => {
     expect(url.searchParams.get("scope")).toContain("instagram_content_publish");
   });
 
+  it("uses a Facebook Login for Business configuration when one is set", () => {
+    process.env.META_LOGIN_CONFIG_ID = "123456789";
+    const url = new URL(metaAuthorizeUrl("st4te"));
+    delete process.env.META_LOGIN_CONFIG_ID;
+    expect(url.searchParams.get("config_id")).toBe("123456789");
+    expect(url.searchParams.get("scope")).toBeNull();
+  });
+
   it("exchanges the code for a long-lived token and lists Pages", async () => {
     const { userToken, scopes } = await exchangeMetaCode("META_CODE");
     expect(userToken).toBe("LONG_USER");

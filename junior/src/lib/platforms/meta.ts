@@ -66,7 +66,8 @@ export function metaAuthorizeUrl(state: string): string {
   url.searchParams.set("redirect_uri", redirectUri("meta"));
   url.searchParams.set("state", state);
   url.searchParams.set("response_type", "code");
-  url.searchParams.set("scope", meta.scopes.join(","));
+  if (meta.loginConfigId()) url.searchParams.set("config_id", meta.loginConfigId());
+  else url.searchParams.set("scope", meta.scopes.join(","));
   return url.toString();
 }
 

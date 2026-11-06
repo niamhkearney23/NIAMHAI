@@ -196,8 +196,10 @@ npm run lint && npm run typecheck
    for Business. Redirect URI `https://<app>/api/connect/meta/callback`.
    Permissions: `pages_show_list`, `pages_read_engagement`,
    `pages_manage_posts`, `instagram_basic`, `instagram_content_publish`,
-   `business_management`. Until App Review approves them, only people with a
-   role on the app can connect. Business verification is usually required.
+   `business_management`. With Facebook Login for Business, create a
+   configuration with those permissions and set `META_LOGIN_CONFIG_ID`.
+   Until App Review approves them, only people with a role on the app can
+   connect. Business verification is usually required.
 7. **LinkedIn app** (linkedin.com/developers): add "Sign In with LinkedIn
    using OpenID Connect" and "Share on LinkedIn". Redirect URI
    `https://<app>/api/connect/linkedin/callback`. LinkedIn tokens last 60
