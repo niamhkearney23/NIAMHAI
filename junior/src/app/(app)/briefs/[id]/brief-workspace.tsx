@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CHANNEL_DESCRIPTION, CHANNEL_LABEL, CHANNELS, STATUS_LABEL } from "@/lib/channels";
 import { openChecks } from "@/lib/guardrails";
+import type { Brand } from "@/lib/brand";
 import type { Connections } from "@/lib/connections";
 import type { Channel, Post, TimeZone } from "@/lib/types";
 import { PostEditor } from "./post-editor";
@@ -14,8 +15,12 @@ export function BriefWorkspace({
   defaultSchedule,
   firm,
   connections,
+  newsletter,
+  brand,
 }: {
   connections: Connections;
+  newsletter: { status: "active"; display_name: string } | null;
+  brand: Brand;
   posts: Post[];
   initialChannel: Channel;
   timezone: TimeZone;
@@ -73,7 +78,8 @@ export function BriefWorkspace({
               timezone={timezone}
               defaultSchedule={defaultSchedule}
               firm={firm}
-              connection={channel === "newsletter" ? null : connections[channel]}
+              connection={channel === "newsletter" ? newsletter : connections[channel]}
+              brand={brand}
               onChange={(updated) => setPosts((list) => list.map((p) => (p.id === updated.id ? updated : p)))}
             />
           </div>

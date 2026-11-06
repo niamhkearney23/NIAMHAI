@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { Notice, PageHeader } from "@/components/ui";
 import { CHANNELS } from "@/lib/channels";
 import { listConnections } from "@/lib/connections";
-import { requireProfile } from "@/lib/dal";
+import { resendConfigured } from "@/lib/newsletter/resend";
+import { brandOf, requireProfile } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
 import { formatDateTime, utcToZonedInput } from "@/lib/time";
 import type { Brief, Channel, Post } from "@/lib/types";
@@ -27,7 +28,7 @@ export default async function BriefPage({ params, searchParams }: PageProps<"/br
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const supabase = await createClient();
-  const [{ data: brief }, { data: posts }, connections] = await Promise.all([
+  const [{ data: brief }, { data: posts }, connections, { count: subscriberCount }] = await Promise.all([
     supabase
       .from("briefs")
       .select("id, title, source_kind, source_name, source_text, redactions, pii_kept, drafted_with, created_at")
@@ -40,7 +41,12 @@ export default async function BriefPage({ params, searchParams }: PageProps<"/br
       )
       .eq("brief_id", id),
     listConnections(),
+    supabase.from("subscribers").select("id", { count: "exact", head: true }).eq("status", "subscribed"),
   ]);
+  const newsletter =
+    profile.newsletter_enabled && resendConfigured()
+      ? { status: "active" as const, display_name: `${subscriberCount ?? 0} subscriber${subscriberCount === 1 ? "" : "s"}` }
+      : null;
   if (!brief || !posts?.length) notFound();
 
   const b = brief as Brief;
@@ -80,6 +86,8 @@ export default async function BriefPage({ params, searchParams }: PageProps<"/br
         defaultSchedule={tomorrowAtNine(profile.timezone)}
         firm={profile.firm}
         connections={connections}
+        newsletter={newsletter}
+        brand={brandOf(profile)}
       />
     </div>
   );

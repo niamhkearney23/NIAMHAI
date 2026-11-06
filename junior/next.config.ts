@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/cron/publish": ["./src/assets/fonts/**"],
     "/briefs/[id]": ["./src/assets/fonts/**"],
+    "/api/posts/[id]/cards": ["./src/assets/fonts/**"],
   },
   experimental: {
     serverActions: {

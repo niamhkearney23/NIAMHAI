@@ -121,3 +121,10 @@ export function shiftWeek(mondayKey: string, weeks: number): string {
 export function isDateKey(value: string | undefined): value is string {
   return Boolean(value && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`)));
 }
+
+/** Start of a window of `days` ending now, and of the window before it. */
+export function rangeBounds(days: number | null): { since: Date | null; prevSince: Date | null } {
+  if (!days) return { since: null, prevSince: null };
+  const now = Date.now();
+  return { since: new Date(now - days * 86400_000), prevSince: new Date(now - 2 * days * 86400_000) };
+}

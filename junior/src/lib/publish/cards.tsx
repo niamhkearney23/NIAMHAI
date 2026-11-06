@@ -3,19 +3,14 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
 import sharp from "sharp";
+import { brandColours, DEFAULT_BRAND, type Brand } from "@/lib/brand";
 import type { Card } from "@/lib/types";
 
 // Instagram carousel cards as 1080 x 1350 JPEGs (Instagram only accepts
-// JPEG). Lawgistics colours for now; the lawyer's own brand colours and a
-// card builder come in the next phase.
+// JPEG), in the lawyer's brand colours.
 
 export const CARD_WIDTH = 1080;
 export const CARD_HEIGHT = 1350;
-
-const NAVY = "#171B28";
-const CREAM = "#F1EBDE";
-const PERIWINKLE = "#A8C0EA";
-const STEEL = "#46648F";
 
 const FONT_DIR = path.join(process.cwd(), "src/assets/fonts");
 
@@ -36,10 +31,11 @@ function headingSize(text: string, first: boolean): number {
   return n > 60 ? 64 : n > 36 ? 76 : 88;
 }
 
-function CardImage({ card, index, total, firm }: { card: Card; index: number; total: number; firm: string }) {
+function CardImage({ card, index, total, firm, brand }: { card: Card; index: number; total: number; firm: string; brand: Brand }) {
   const first = index === 0;
-  const fg = first ? CREAM : NAVY;
-  const label = first ? PERIWINKLE : STEEL;
+  const c = brandColours(brand);
+  const fg = first ? c.coverInk : c.cardInk;
+  const label = first ? c.coverLabel : c.cardLabel;
   const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
@@ -50,7 +46,7 @@ function CardImage({ card, index, total, firm }: { card: Card; index: number; to
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        backgroundColor: first ? NAVY : CREAM,
+        backgroundColor: first ? c.cover : c.card,
         color: fg,
         padding: "96px 92px 84px",
         fontFamily: "Instrument Sans",
@@ -60,7 +56,7 @@ function CardImage({ card, index, total, firm }: { card: Card; index: number; to
         <div style={{ display: "flex", fontFamily: "IBM Plex Mono", fontSize: 28, letterSpacing: 4, color: label }}>
           {`${pad(index + 1)} / ${pad(total)}`}
         </div>
-        {first ? null : <div style={{ display: "flex", height: 3, backgroundColor: PERIWINKLE, marginTop: 36 }} />}
+        {first ? null : <div style={{ display: "flex", height: 3, backgroundColor: c.accent, marginTop: 36 }} />}
       </div>
 
       <div style={{ display: "flex", flexDirection: "column" }}>
@@ -90,7 +86,8 @@ function CardImage({ card, index, total, firm }: { card: Card; index: number; to
           fontSize: 24,
           letterSpacing: 3,
           textTransform: "uppercase",
-          color: first ? "rgba(241,235,222,0.7)" : STEEL,
+          color: label,
+          opacity: first ? 0.75 : 1,
         }}
       >
         <span>{firm}</span>
@@ -101,8 +98,14 @@ function CardImage({ card, index, total, firm }: { card: Card; index: number; to
 }
 
 /** One card as a JPEG. */
-export async function renderCard(card: Card, index: number, total: number, firm: string): Promise<Buffer> {
-  const png = await new ImageResponse(<CardImage card={card} index={index} total={total} firm={firm} />, {
+export async function renderCard(
+  card: Card,
+  index: number,
+  total: number,
+  firm: string,
+  brand: Brand = DEFAULT_BRAND,
+): Promise<Buffer> {
+  const png = await new ImageResponse(<CardImage card={card} index={index} total={total} firm={firm} brand={brand} />, {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
     fonts: await loadFonts(),

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { BrandForm } from "@/components/brand-form";
 import { ConnectionsPanel } from "@/components/connections-panel";
 import { ProfileForm } from "@/components/profile/profile-form";
 import { ButtonLink, PageHeader, Panel } from "@/components/ui";
 import { listConnections } from "@/lib/connections";
 import { CHANNEL_LABEL } from "@/lib/channels";
-import { requireProfile } from "@/lib/dal";
+import { brandOf, requireProfile } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
 import { formatDateTime } from "@/lib/time";
 import type { ApprovalLogEntry } from "@/lib/types";
@@ -76,6 +77,30 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
             <span className="text-sm text-muted">You can come back here any time from Settings.</span>
           </div>
         ) : null}
+      </section>
+
+      <section aria-labelledby="newsletter-heading" className="max-w-2xl space-y-3">
+        <h2 id="newsletter-heading" className="font-serif text-2xl text-ink">
+          Newsletter
+        </h2>
+        <p className="text-[15px] text-ink-2">
+          {profile.newsletter_enabled
+            ? "On. Approved newsletter pieces are emailed to your subscribers at the time you pick."
+            : "Off. Set up your sender details and subscribers to have Junior email approved newsletters."}
+        </p>
+        <ButtonLink href="/settings/newsletter" variant="secondary" size="sm">
+          Newsletter and subscribers
+        </ButtonLink>
+      </section>
+
+      <section id="brand" aria-labelledby="brand-heading" className="max-w-2xl scroll-mt-8 space-y-4">
+        <h2 id="brand-heading" className="font-serif text-2xl text-ink">
+          Carousel colours
+        </h2>
+        <p className="text-[15px] text-ink-2">
+          Instagram cards are drawn in these colours at 1080 by 1350 pixels. Junior picks a readable text colour for each.
+        </p>
+        <BrandForm initial={brandOf(profile)} firm={profile.firm} />
       </section>
 
       <section aria-labelledby="details-heading" className="max-w-2xl space-y-4">

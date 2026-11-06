@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { CopyButton } from "@/components/copy-button";
 import { MascotMessage } from "@/components/mascot";
-import { Badge, Button, Notice, inputClass } from "@/components/ui";
+import { Badge, Button, buttonClass, Notice, inputClass } from "@/components/ui";
 import { CHANNEL_LABEL, PLATFORM_LIMITS, STATUS_LABEL } from "@/lib/channels";
 import { applyFix, openChecks, runRuleChecks } from "@/lib/guardrails";
+import type { Brand } from "@/lib/brand";
 import type { ConnectionSummary } from "@/lib/connections";
 import { formatDateTime, formatTime } from "@/lib/time";
 import type { Card, Check, Post, PostContent, TimeZone } from "@/lib/types";
@@ -35,8 +36,10 @@ export function PostEditor({
   defaultSchedule,
   firm,
   connection,
+  brand,
 }: {
-  connection: ConnectionSummary | null;
+  brand: Brand;
+  connection: Pick<ConnectionSummary, "status" | "display_name"> | null;
   post: Post;
   onChange: (post: Post) => void;
   timezone: TimeZone;
@@ -55,7 +58,7 @@ export function PostEditor({
   const editable = post.status !== "posted";
   const approvedLike = post.status === "approved" || post.status === "scheduled";
   const channelName = CHANNEL_LABEL[post.channel];
-  const autoPublish = post.channel !== "newsletter" && connection?.status === "active";
+  const autoPublish = connection?.status === "active";
   const publishing = post.publish_state === "publishing";
   const failed = post.publish_state === "failed";
 
@@ -167,7 +170,14 @@ export function PostEditor({
               <h3 className="label">Carousel cards</h3>
               <span className="font-mono text-[11px] text-muted">{draft.cards.length} cards</span>
             </div>
-            <CarouselPreview cards={draft.cards} firm={firm} />
+            <CarouselPreview cards={draft.cards} firm={firm} brand={brand} />
+            <p className="text-sm text-muted">
+              Cards use your brand colours.{" "}
+              <Link href="/settings#brand" className="text-accent underline underline-offset-4">
+                Change them
+              </Link>
+              .
+            </p>
             <ol className="space-y-3">
               {draft.cards.map((card, i) => (
                 <li key={i} className="rounded-[4px] border border-line bg-surface p-3">
@@ -279,7 +289,12 @@ export function PostEditor({
                 variant="primary"
               />
               {post.channel === "instagram" ? (
-                <CopyButton text={post.cards.map((c, i) => `${i + 1}. ${c.heading}\n${c.body}`).join("\n\n")} label="Copy all cards" />
+                <>
+                  <CopyButton text={post.cards.map((c, i) => `${i + 1}. ${c.heading}\n${c.body}`).join("\n\n")} label="Copy all cards" />
+                  <a href={`/api/posts/${post.id}/cards`} className={buttonClass("secondary", "sm")} download>
+                    Download card images (.zip)
+                  </a>
+                </>
               ) : null}
             </div>
           ) : (
@@ -381,9 +396,19 @@ export function PostEditor({
 
               <p className="text-xs text-muted">
                 {autoPublish ? (
-                  `Junior will publish to ${connection!.display_name} at the time you pick, and log it.`
+                  post.channel === "newsletter" ? (
+                    `Junior will email it to your ${connection!.display_name} at the time you pick, and log it.`
+                  ) : (
+                    `Junior will publish to ${connection!.display_name} at the time you pick, and log it.`
+                  )
                 ) : post.channel === "newsletter" ? (
-                  "Newsletter sending arrives in the next release. Copy it into your email tool, then mark it as posted."
+                  <>
+                    <Link href="/settings/newsletter" className="text-accent underline underline-offset-4">
+                      Set up your newsletter
+                    </Link>{" "}
+                    and Junior will email it at the time you pick. Until then, copy it into your email tool, then mark it as
+                    posted.
+                  </>
                 ) : (
                   <>
                     <Link href="/settings#connections" className="text-accent underline underline-offset-4">
@@ -401,7 +426,7 @@ export function PostEditor({
                     confirmNow ? (
                       <>
                         <Button type="button" size="sm" disabled={busy || dirty} onClick={() => run(() => publishNow(post.id))}>
-                          Publish to {channelName} now
+                          {post.channel === "newsletter" ? "Send it now" : `Publish to ${channelName} now`}
                         </Button>
                         <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={() => setConfirmNow(false)}>
                           Cancel
@@ -430,7 +455,11 @@ export function PostEditor({
           ) : null}
 
           {post.status === "posted" ? (
-            <MascotMessage mood="happy" title={post.published_via === "junior" ? `Published to ${channelName}` : "Posted"} size={44}>
+            <MascotMessage
+              mood="happy"
+              title={post.published_via === "junior" ? (post.channel === "newsletter" ? "Newsletter sent" : `Published to ${channelName}`) : "Posted"}
+              size={44}
+            >
               {post.posted_at ? `${formatDateTime(post.posted_at, timezone)}. ` : null}
               {post.external_url ? (
                 <a href={post.external_url} target="_blank" rel="noreferrer" className="text-accent underline underline-offset-4">

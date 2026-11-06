@@ -4,6 +4,7 @@ import { z } from "zod";
 import { CHANNEL_LABEL } from "@/lib/channels";
 import { listConnections, type Provider } from "@/lib/connections";
 import { getProfile, requireUser } from "@/lib/dal";
+import { resendConfigured } from "@/lib/newsletter/resend";
 import { runPublisher } from "@/lib/publish/publisher";
 import { runRuleChecks } from "@/lib/guardrails";
 import { createClient } from "@/lib/supabase/server";
@@ -151,7 +152,12 @@ async function publishAndReload(postId: string): Promise<PostResult> {
 async function requireConnection(postId: string): Promise<string | null> {
   const { post } = await loadPost(postId);
   if (!post) return "Post not found.";
-  if (post.channel === "newsletter") return "Newsletters are not sent automatically yet. Copy it into your email tool.";
+  if (post.channel === "newsletter") {
+    const profile = await getProfile();
+    return profile?.newsletter_enabled && resendConfigured()
+      ? null
+      : "Switch on your newsletter in Settings first, or copy it into your email tool.";
+  }
   const connections = await listConnections();
   if (connections[post.channel as Provider]?.status !== "active") {
     return `Connect ${CHANNEL_LABEL[post.channel]} in Settings first, or copy the post and publish it yourself.`;

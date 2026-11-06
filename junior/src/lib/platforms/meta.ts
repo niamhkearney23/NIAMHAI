@@ -190,3 +190,32 @@ export async function publishCarousel(
   );
   return { id, url: link.permalink ?? null };
 }
+
+export interface Metrics {
+  likes: number | null;
+  comments: number | null;
+  shares: number | null;
+}
+
+/** Reactions, comments and shares on a Page post. */
+export async function pagePostMetrics(postId: string, pageToken: string): Promise<Metrics> {
+  const r = await graph<{
+    reactions?: { summary?: { total_count?: number } };
+    comments?: { summary?: { total_count?: number } };
+    shares?: { count?: number };
+  }>(postId, {
+    token: pageToken,
+    params: { fields: "reactions.summary(total_count).limit(0),comments.summary(total_count).limit(0),shares" },
+  });
+  return { likes: r.reactions?.summary?.total_count ?? 0, comments: r.comments?.summary?.total_count ?? 0, shares: r.shares?.count ?? 0 };
+}
+
+/** Likes and comments on an Instagram post. */
+export async function instagramMetrics(mediaId: string, token: string): Promise<Metrics> {
+  const r = await graph<{ like_count?: number; comments_count?: number }>(mediaId, {
+    token,
+    network: "Instagram",
+    params: { fields: "like_count,comments_count" },
+  });
+  return { likes: r.like_count ?? 0, comments: r.comments_count ?? 0, shares: null };
+}

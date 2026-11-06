@@ -1,11 +1,13 @@
 import "server-only";
 import { markExpired, tokenFor, type Provider } from "@/lib/connections";
+import { DEFAULT_BRAND } from "@/lib/brand";
 import { CHANNEL_LABEL } from "@/lib/channels";
 import { PlatformError } from "@/lib/platforms/config";
 import { publishLinkedinPost } from "@/lib/platforms/linkedin";
 import { publishCarousel, publishToPage } from "@/lib/platforms/meta";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Card, Channel } from "@/lib/types";
+import { sendNewsletter } from "@/lib/newsletter/send";
 import { renderCard } from "./cards";
 
 // Publishes approved posts that are due. The database decides what is due
@@ -34,12 +36,17 @@ export interface PublishResult {
 type Admin = ReturnType<typeof createAdminClient>;
 
 async function carouselUrls(admin: Admin, post: ClaimedPost): Promise<string[]> {
-  const { data: profile } = await admin.from("profiles").select("firm").eq("id", post.user_id).maybeSingle();
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("firm, brand_cover, brand_card, brand_accent")
+    .eq("id", post.user_id)
+    .maybeSingle();
   const firm = profile?.firm ?? "";
+  const brand = profile ? { cover: profile.brand_cover, card: profile.brand_card, accent: profile.brand_accent } : DEFAULT_BRAND;
   const bucket = admin.storage.from("carousel");
   const paths: string[] = [];
   for (const [i, card] of post.cards.entries()) {
-    const jpeg = await renderCard(card, i, post.cards.length, firm);
+    const jpeg = await renderCard(card, i, post.cards.length, firm, brand);
     const path = `${post.user_id}/${post.id}/${String(i + 1).padStart(2, "0")}.jpg`;
     const { error } = await bucket.upload(path, jpeg, { contentType: "image/jpeg", upsert: true });
     if (error) throw new PlatformError("Junior could not prepare the carousel images. It will try again shortly.", { retryable: true });
@@ -55,7 +62,7 @@ async function carouselUrls(admin: Admin, post: ClaimedPost): Promise<string[]> 
 }
 
 async function publishOne(admin: Admin, post: ClaimedPost): Promise<{ id: string; url: string | null }> {
-  if (post.channel === "newsletter") throw new PlatformError("Newsletters are not sent automatically yet.", { retryable: false });
+  if (post.channel === "newsletter") return sendNewsletter(admin, post);
   const provider = post.channel as Provider;
   const conn = await tokenFor(post.user_id, provider);
   const label = CHANNEL_LABEL[post.channel];

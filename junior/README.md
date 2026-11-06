@@ -13,12 +13,12 @@ set to `junior`.
 
 - **Phase 1:** sign-in, onboarding, drafting, review with checks, approval
   log, queue, week calendar, copy buttons.
-- **Phase 2 (this release):** Facebook Page, Instagram and LinkedIn
-  connections with encrypted tokens, scheduled publishing, publish now, retries.
-  Instagram carousels are rendered as 1080 x 1350 JPEGs in Lawgistics colours.
-- Phase 3: newsletter sending with Resend, a carousel builder in the lawyer's
-  own brand colours, results per post. Until then newsletters are copied by
-  hand.
+- **Phase 2:** Facebook Page, Instagram and LinkedIn connections with
+  encrypted tokens, scheduled publishing, publish now, retries.
+- **Phase 3 (this release):** newsletter sending with Resend (subscribers with
+  consent records, a public sign-up page with email confirmation, one-click
+  unsubscribe, delivery tracking), a carousel builder in each lawyer's brand
+  colours with image downloads, and results per post.
 
 ## Stack
 
@@ -111,6 +111,39 @@ NRIC numbers. Emojis, dashes and spelling have a "Fix it for me" button.
 - **Logging:** "Asked to publish", "Published by Junior" (with the live link)
   and "Publishing failed" join the approval log.
 
+### Newsletter
+
+- **Subscribers** live in Junior with a consent record: added by the lawyer
+  (who confirms they agreed and notes how), imported, or signed up on the
+  lawyer's public page (`/subscribe/<slug>`) and confirmed by email. A lawyer
+  cannot resubscribe someone who unsubscribed; only that person can.
+- **Sending** goes through the same publisher as social posts. Each recipient
+  gets a send row before anything is sent, and each batch of 100 carries an
+  idempotency key, so a retry never emails anyone twice.
+- **Every email** has a plain-text part, the lawyer's footer, an unsubscribe
+  link and `List-Unsubscribe` one-click headers (`/api/unsubscribe/<token>`).
+- **Resend webhooks** (`/api/webhooks/resend`, Svix signatures checked) record
+  deliveries, opens and clicks. Bounces and spam complaints stop future sends.
+
+### Carousel builder
+
+Settings has three colours (first card, other cards, accent) with a live
+preview. Junior picks a readable text colour for each background and warns
+when contrast is low. Cards are rendered at 1080 x 1350 for publishing and can
+be downloaded as JPEGs (a zip) once approved.
+
+### Results
+
+- Likes, comments and shares come from the Graph API for Facebook and
+  Instagram, refreshed hourly (`/api/cron/results`, scheduled by the migration)
+  or with "Refresh now".
+- LinkedIn only shares post activity with apps it approves for member social
+  data, so the lawyer enters those numbers by hand. Hand-entered numbers are
+  never overwritten.
+- Newsletters show recipients, opens and clicks from the send records.
+- Enquiries are logged by the lawyer per post, with a short note that is
+  checked for names and contact details.
+
 ### Privacy (PDPA 2010 and PDPA 2012)
 
 - The draft screen scans pasted text for client names, MyKad and NRIC/FIN
@@ -157,9 +190,11 @@ node scripts/mock-platforms.mjs
 ```
 
 Then in `.env.local`: `META_APP_ID=mock-app`, `META_APP_SECRET=mock-secret`,
-`LINKEDIN_CLIENT_ID=mock-client`, `LINKEDIN_CLIENT_SECRET=mock-secret`, and
-`META_GRAPH_URL`, `META_DIALOG_URL`, `LINKEDIN_API_URL`, `LINKEDIN_OAUTH_URL`
-all set to `http://localhost:4010`. Add `SUPABASE_SECRET_KEY` (printed by
+`LINKEDIN_CLIENT_ID=mock-client`, `LINKEDIN_CLIENT_SECRET=mock-secret`,
+`RESEND_API_KEY=re_mock`, `NEWSLETTER_FROM_DOMAIN=news.junior.test`, and
+`META_GRAPH_URL`, `META_DIALOG_URL`, `LINKEDIN_API_URL`, `LINKEDIN_OAUTH_URL`,
+`RESEND_API_URL` all set to `http://localhost:4010`. Emails Junior sends show
+on the mock's feed page too. Add `SUPABASE_SECRET_KEY` (printed by
 `supabase start`), a `TOKEN_ENCRYPTION_KEY` and a `CRON_SECRET`. To let the
 local database wake the publisher:
 
@@ -173,9 +208,11 @@ and run the dev server with `npx next dev -H 0.0.0.0`.
 ## Tests
 
 ```bash
-npm test                    # 45 unit tests: privacy scan, house rules, time zones, encryption,
-                            # card rendering, Claude call and Meta/LinkedIn clients (mocked APIs)
-npx supabase test db        # 46 database tests: approvals, publishing, token privacy
+npm test                    # 59 unit tests: privacy scan, house rules, time zones, encryption,
+                            # brand contrast, card rendering, newsletter email and webhooks,
+                            # Claude, Meta, LinkedIn and Resend clients (mocked APIs)
+npx supabase test db        # 62 database tests: approvals, publishing, token privacy,
+                            # newsletter consent, private results
 npm run lint && npm run typecheck
 ```
 
@@ -206,8 +243,15 @@ npm run lint && npm run typecheck
    days; Junior shows the date and asks the lawyer to reconnect.
 8. **The publisher:** in the Supabase SQL editor, store the app URL and
    `CRON_SECRET` in Vault (the two `vault.create_secret` lines above, with the
-   live URL). The migration already schedules the job. On Vercel Pro you can
-   use Vercel Cron on `/api/cron/publish` instead.
+   live URL). The migrations already schedule publishing (every minute) and
+   results (hourly). On Vercel Pro you can use Vercel Cron on
+   `/api/cron/publish` and `/api/cron/results` instead.
+9. **Resend:** verify the sending domain, set `RESEND_API_KEY` and
+   `NEWSLETTER_FROM_DOMAIN`, and add a webhook to
+   `https://<app>/api/webhooks/resend` for `email.delivered`, `email.opened`,
+   `email.clicked`, `email.bounced` and `email.complained`, with its secret in
+   `RESEND_WEBHOOK_SECRET`. Turn on open and click tracking for the domain if
+   you want those numbers.
 
 ## Layout
 
@@ -220,5 +264,9 @@ npm run lint && npm run typecheck
 - `src/lib/platforms`: Meta and LinkedIn clients; `src/lib/connections.ts`:
   encrypted token storage; `src/lib/publish`: publisher and card renderer
 - `src/app/api/connect`, `src/app/api/cron/publish`: OAuth and the publisher
-- `scripts/mock-platforms.mjs`: local stand-in for Meta and LinkedIn
+- `src/lib/newsletter`: email rendering, Resend client, sender, webhook check;
+  `src/lib/results`: results refresh; `src/lib/brand.ts`: colours and contrast
+- `src/app/(app)/results`, `src/app/(app)/settings/newsletter`,
+  `src/app/subscribe`, `src/app/unsubscribe`: results, newsletter and public pages
+- `scripts/mock-platforms.mjs`: local stand-in for Meta, LinkedIn and Resend
 - `src/components/mascot.tsx`: Junior (idle, thinking, happy)

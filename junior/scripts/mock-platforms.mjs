@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Local stand-ins for the Facebook Graph API, Facebook Login, LinkedIn OAuth
-// and the LinkedIn Posts API. For development and tests only: it lets you run
+// Local stand-ins for the Facebook Graph API, Facebook Login, LinkedIn OAuth,
+// the LinkedIn Posts API and Resend's email API. For development and tests only: it lets you run
 // the whole connect-and-publish flow without real developer apps.
 //
 //   node scripts/mock-platforms.mjs            # http://localhost:4010
@@ -10,6 +10,7 @@
 // and LINKEDIN_OAUTH_URL set to http://localhost:4010, and META_APP_SECRET /
 // LINKEDIN_CLIENT_SECRET set to "mock-secret".
 
+import { randomUUID } from "node:crypto";
 import http from "node:http";
 import { fileURLToPath } from "node:url";
 
@@ -23,6 +24,8 @@ function state() {
     ],
     containers: new Map(),
     posts: [],
+    emails: [],
+    idempotency: new Map(),
     failNext: null,
     seq: 1,
   };
@@ -59,7 +62,26 @@ function unLittle(text) {
   return text.replace(/\{hashtag\|\\#\|([^}]+)\}/g, "#$1").replace(/\\(.)/g, "$1");
 }
 
-function feedPage(posts) {
+function emailSection(emails) {
+  const esc = (x) => String(x).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const issues = new Map();
+  for (const e of emails) {
+    const key = e.subject;
+    if (!issues.has(key)) issues.set(key, { first: e, to: [] });
+    issues.get(key).to.push(...e.to);
+  }
+  if (!issues.size) return "";
+  return `<h2 style="margin:28px 0 12px;font-size:18px">Emails sent through Resend (${emails.length})</h2>` +
+    [...issues.values()]
+      .reverse()
+      .map(({ first, to }) => `<article style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:18px;margin:0 0 16px">
+<p style="margin:0 0 6px;font-size:12px;color:#666;text-transform:uppercase;letter-spacing:.08em">Email · ${esc(first.from)} · to ${to.length}: ${esc(to.slice(0, 3).join(", "))}${to.length > 3 ? "…" : ""}</p>
+<p style="margin:0 0 10px;font-weight:600">${esc(first.subject)}</p>
+<iframe srcdoc="${esc(first.html)}" style="width:100%;height:520px;border:1px solid #eee;border-radius:4px"></iframe></article>`)
+      .join("");
+}
+
+function feedPage(posts, emails = []) {
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   const items = posts
     .slice()
@@ -75,7 +97,7 @@ ${p.images?.length ? `<div style="display:flex;gap:8px;overflow-x:auto;margin-to
   return `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Mock feed</title>
 <body style="font-family:system-ui;background:#f0f2f5;margin:0;padding:24px"><main style="max-width:720px;margin:0 auto">
 <p style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:.08em">Local mock platforms</p>
-<h1 style="margin:0 0 20px;font-size:22px">What Junior published (${posts.length})</h1>${items || "<p>Nothing yet.</p>"}</main></body>`;
+<h1 style="margin:0 0 20px;font-size:22px">What Junior published (${posts.length})</h1>${items || "<p>Nothing yet.</p>"}${emailSection(emails)}</main></body>`;
 }
 
 export function startMockPlatforms({ port = 4010, host = "127.0.0.1" } = {}) {
@@ -93,9 +115,10 @@ export function startMockPlatforms({ port = 4010, host = "127.0.0.1" } = {}) {
       // ---- Test controls
       if (path === "/__mock/feed") {
         res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-        return res.end(feedPage(s.posts));
+        return res.end(feedPage(s.posts, s.emails));
       }
       if (path === "/__mock/posts") return json(res, 200, s.posts.map(({ images, ...rest }) => ({ ...rest, images: images?.length ?? 0 })));
+      if (path === "/__mock/emails") return json(res, 200, s.emails.map(({ html, ...rest }) => ({ ...rest, htmlLength: html?.length ?? 0 })));
       if (path === "/__mock/fail-next") {
         s.failNext = { network: q.network, status: Number(q.status ?? 503) };
         return json(res, 200, { ok: true });
@@ -116,7 +139,32 @@ export function startMockPlatforms({ port = 4010, host = "127.0.0.1" } = {}) {
         return false;
       };
 
+      // ---- Resend
+      if ((path === "/emails" || path === "/emails/batch") && req.method === "POST") {
+        if (!String(req.headers.authorization ?? "").startsWith("Bearer re_")) return json(res, 401, { message: "API key is invalid", name: "validation_error" });
+        if (failIf("resend")) return;
+        const key = req.headers["idempotency-key"];
+        if (key && s.idempotency.has(key)) return json(res, 200, s.idempotency.get(key));
+        const list = path === "/emails" ? [body] : body;
+        if (!Array.isArray(list) || list.length > 100) return json(res, 422, { message: "Send between 1 and 100 emails" });
+        for (const e of list) {
+          if (!e.from || !e.to?.length || !e.subject || !(e.html || e.text)) return json(res, 422, { message: "Missing from, to, subject or content" });
+        }
+        const ids = list.map((e) => {
+          const id = randomUUID(); // Resend email ids are UUIDs
+          s.emails.push({ id, ...e, at: new Date().toISOString() });
+          return { id };
+        });
+        const reply = path === "/emails" ? ids[0] : { data: ids };
+        if (key) s.idempotency.set(key, reply);
+        return json(res, 200, reply);
+      }
+
       // ---- LinkedIn
+      if (path.startsWith("/rest/socialActions/")) {
+        // Like the real API for most apps: reading member post activity needs a partner permission.
+        return json(res, 403, { message: "Not enough permissions to access: socialActions.GET.NO_VERSION", status: 403 });
+      }
       if (path === "/oauth/v2/authorization") {
         const back = new URL(q.redirect_uri);
         back.searchParams.set("state", q.state);
@@ -261,6 +309,10 @@ export function startMockPlatforms({ port = 4010, host = "127.0.0.1" } = {}) {
           return json(res, 200, { status_code: c.polls < 2 ? "IN_PROGRESS" : "FINISHED", id: rest });
         }
         const post = s.posts.find((x) => x.id === rest);
+        if (post && String(q.fields ?? "").includes("reactions")) {
+          return json(res, 200, { id: rest, reactions: { data: [], summary: { total_count: 24 } }, comments: { data: [], summary: { total_count: 5 } }, shares: { count: 3 } });
+        }
+        if (post && String(q.fields ?? "").includes("like_count")) return json(res, 200, { id: rest, like_count: 58, comments_count: 7 });
         if (post) {
           const link = `${base()}/__mock/feed#${rest}`;
           return json(res, 200, q.fields === "permalink" ? { permalink: link, id: rest } : { permalink_url: link, id: rest });

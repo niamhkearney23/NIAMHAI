@@ -36,6 +36,14 @@ export interface Profile {
   voice_samples: string[];
   timezone: TimeZone;
   onboarded_at: string | null;
+  brand_cover: string;
+  brand_card: string;
+  brand_accent: string;
+  newsletter_enabled: boolean;
+  newsletter_from_name: string;
+  newsletter_reply_to: string;
+  newsletter_footer: string;
+  newsletter_slug: string | null;
 }
 
 export interface Brief {

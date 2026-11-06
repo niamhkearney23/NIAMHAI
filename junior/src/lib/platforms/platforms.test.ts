@@ -5,8 +5,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 // Plain JavaScript dev tool; types are inferred.
 import { startMockPlatforms } from "../../../scripts/mock-platforms.mjs";
 import { PlatformError } from "./config";
-import { exchangeLinkedinCode, getMember, linkedinAuthorizeUrl, publishLinkedinPost, toLittleText } from "./linkedin";
-import { exchangeMetaCode, listPages, metaAuthorizeUrl, publishCarousel, publishToPage } from "./meta";
+import { exchangeLinkedinCode, getMember, linkedinAuthorizeUrl, linkedinMetrics, publishLinkedinPost, toLittleText } from "./linkedin";
+import { exchangeMetaCode, instagramMetrics, listPages, metaAuthorizeUrl, pagePostMetrics, publishCarousel, publishToPage } from "./meta";
 
 let mock: http.Server;
 let images: http.Server;
@@ -149,5 +149,21 @@ describe("Facebook and Instagram", () => {
     expect(err.retryable).toBe(false);
     const one = await publishCarousel("17841400000000001", "PAGE_TOKEN_1001", [`${imageUrl}/1.jpg`], "x").catch((e) => e);
     expect(one.message).toMatch(/between 2 and 10/);
+  });
+});
+
+describe("results", () => {
+  it("reads likes, comments and shares from Facebook and Instagram", async () => {
+    const fb = await publishToPage("1001", "PAGE_TOKEN_1001", "Hello");
+    expect(await pagePostMetrics(fb.id, "PAGE_TOKEN_1001")).toEqual({ likes: 24, comments: 5, shares: 3 });
+    const urls = [1, 2].map((i) => `${imageUrl}/${i}.jpg`);
+    const ig = await publishCarousel("17841400000000001", "PAGE_TOKEN_1001", urls, "Caption", { pollMs: 5 });
+    expect(await instagramMetrics(ig.id, "PAGE_TOKEN_1001")).toEqual({ likes: 58, comments: 7, shares: null });
+  });
+
+  it("reports LinkedIn's refusal so the lawyer can enter numbers by hand", async () => {
+    const err = await linkedinMetrics("urn:li:share:1", "LI_TOKEN").catch((e) => e);
+    expect(err).toBeInstanceOf(PlatformError);
+    expect(err.options.status).toBe(403);
   });
 });

@@ -30,6 +30,10 @@ export default function PrivacyPage() {
             <li>Writing samples you give us, to draft posts in your voice.</li>
             <li>Source material you paste or upload, and the drafts made from it, to produce and keep your posts.</li>
             <li>A log of approvals, with who approved and when, so there is a record of what you signed off.</li>
+            <li>
+              Access tokens for the Facebook, Instagram and LinkedIn accounts you connect, stored encrypted, used only to
+              publish what you approve and to read its likes and comments.
+            </li>
           </ul>
         </section>
         <section>
@@ -41,11 +45,22 @@ export default function PrivacyPage() {
           </p>
         </section>
         <section>
+          <h2>Newsletter subscribers</h2>
+          <p>
+            When you send a newsletter through Junior, Lawgistics holds your subscribers&apos; email addresses and names on
+            your behalf, with a record of how and when each person agreed. People who sign up on your page confirm by
+            email first. Every newsletter has an unsubscribe link, and Junior stops emailing anyone who unsubscribes,
+            bounces or marks it as spam. You can delete a subscriber, and their consent record, at any time.
+          </p>
+        </section>
+        <section>
           <h2>Who processes it</h2>
           <ul>
             <li>Supabase, which hosts our database, sign-in and file storage, in [region].</li>
             <li>Anthropic, whose Claude models write the drafts.</li>
             <li>OpenAI, which transcribes voice notes, if you upload one.</li>
+            <li>Resend, which delivers newsletters and records deliveries, opens and clicks.</li>
+            <li>Meta and LinkedIn, when you connect an account and Junior publishes to it.</li>
           </ul>
           <p className="mt-2">
             Some of these providers process data outside Malaysia and Singapore. We use them under contracts that require

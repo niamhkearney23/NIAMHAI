@@ -105,3 +105,16 @@ export async function publishLinkedinPost(memberId: string, token: string, text:
   if (!id) throw new PlatformError("LinkedIn accepted the post but did not say where it is. Check your profile.", { retryable: false });
   return { id, url: `https://www.linkedin.com/feed/update/${id}/` };
 }
+
+/**
+ * Likes and comments on a member post. LinkedIn only allows this for apps it
+ * has approved for member social data; most apps get a 403, and the lawyer
+ * enters the numbers by hand instead.
+ */
+export async function linkedinMetrics(urn: string, token: string): Promise<{ likes: number; comments: number }> {
+  const res = await request(`${linkedin.apiUrl()}/rest/socialActions/${encodeURIComponent(urn)}`, {
+    headers: { Authorization: `Bearer ${token}`, "LinkedIn-Version": linkedin.version(), "X-Restli-Protocol-Version": "2.0.0" },
+  });
+  const json = (await res.json()) as { likesSummary?: { totalLikes?: number }; commentsSummary?: { totalFirstLevelComments?: number } };
+  return { likes: json.likesSummary?.totalLikes ?? 0, comments: json.commentsSummary?.totalFirstLevelComments ?? 0 };
+}

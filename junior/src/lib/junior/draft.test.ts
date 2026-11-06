@@ -16,6 +16,14 @@ const profile: Profile = {
   voice_samples: ["Most disputes start with a missing paper trail.", "Read your own contracts."],
   timezone: "Asia/Kuala_Lumpur",
   onboarded_at: "2026-11-05T00:00:00Z",
+  brand_cover: "#171B28",
+  brand_card: "#F1EBDE",
+  brand_accent: "#A8C0EA",
+  newsletter_enabled: false,
+  newsletter_from_name: "",
+  newsletter_reply_to: "",
+  newsletter_footer: "",
+  newsletter_slug: null,
 };
 
 const checks = [1, 2, 3, 4].map((i) => ({ item: `Check ${i}`, pass: i !== 1, note: "Note." }));

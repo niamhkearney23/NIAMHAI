@@ -25,7 +25,9 @@ export const getProfile = cache(async (): Promise<Profile | null> => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
-    .select("id, full_name, firm, jurisdiction, practice_areas, voice_samples, timezone, onboarded_at")
+    .select(
+      "id, full_name, firm, jurisdiction, practice_areas, voice_samples, timezone, onboarded_at, brand_cover, brand_card, brand_accent, newsletter_enabled, newsletter_from_name, newsletter_reply_to, newsletter_footer, newsletter_slug",
+    )
     .eq("id", user.id)
     .maybeSingle();
   return (data as Profile | null) ?? null;
@@ -37,4 +39,8 @@ export async function requireProfile(): Promise<Profile> {
   const profile = await getProfile();
   if (!profile?.onboarded_at) redirect("/onboarding");
   return profile;
+}
+
+export function brandOf(profile: Pick<Profile, "brand_cover" | "brand_card" | "brand_accent">) {
+  return { cover: profile.brand_cover, card: profile.brand_card, accent: profile.brand_accent };
 }
