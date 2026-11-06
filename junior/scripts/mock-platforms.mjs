@@ -10,7 +10,7 @@
 // and LINKEDIN_OAUTH_URL set to http://localhost:4010, and META_APP_SECRET /
 // LINKEDIN_CLIENT_SECRET set to "mock-secret".
 
-import { randomUUID } from "node:crypto";
+import { createHmac, randomUUID } from "node:crypto";
 import http from "node:http";
 import { fileURLToPath } from "node:url";
 
@@ -224,6 +224,10 @@ export function startMockPlatforms({ port = 4010, host = "127.0.0.1" } = {}) {
       }
 
       const token = p.access_token;
+      // Like an app with "Require App Secret" switched on.
+      if (token && p.appsecret_proof !== createHmac("sha256", SECRET).update(token).digest("hex")) {
+        return graphError(res, "Invalid appsecret_proof provided in the API argument", 100);
+      }
       if (rest === "me/permissions") {
         if (token !== "LONG_USER") return graphError(res, "Invalid OAuth access token.", 190);
         return json(res, 200, {

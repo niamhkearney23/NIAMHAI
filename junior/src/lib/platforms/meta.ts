@@ -1,4 +1,5 @@
 import "server-only";
+import { createHmac } from "node:crypto";
 import { meta, PlatformError, redirectUri } from "./config";
 
 // Facebook Pages and Instagram (professional account linked to a Page), via
@@ -43,7 +44,11 @@ async function graph<T>(
   },
 ): Promise<T> {
   const url = new URL(`${meta.graphUrl()}/${meta.version()}/${path.replace(/^\//, "")}`);
-  const all = token ? { ...params, access_token: token } : params;
+  // appsecret_proof ties each call to our app secret, so a leaked token is no
+  // use on its own (and Meta can be told to require it).
+  const all = token
+    ? { ...params, access_token: token, appsecret_proof: createHmac("sha256", meta.appSecret()).update(token).digest("hex") }
+    : params;
   let res: Response;
   try {
     if (method === "GET") {

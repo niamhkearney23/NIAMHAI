@@ -63,7 +63,7 @@ export async function saveManualResults(_prev: ActionState, formData: FormData):
   return { ok: true };
 }
 
-export async function useAutomaticResults(formData: FormData) {
+export async function switchToAutomaticResults(formData: FormData) {
   await requireUser();
   const supabase = await createClient();
   await supabase.from("post_results").update({ source: "api" }).eq("post_id", String(formData.get("post_id")));

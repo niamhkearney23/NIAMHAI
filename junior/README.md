@@ -155,6 +155,11 @@ be downloaded as JPEGs (a zip) once approved.
   are deleted straight away.
 - Sign-in links open a confirmation page, so email scanners cannot use up the
   link.
+- The public sign-up page gives the same answer whether or not an address is
+  already subscribed, so it cannot reveal who follows which firm, and it sends
+  at most 30 confirmation emails per firm per hour.
+- Every Graph API call carries an `appsecret_proof`, so a leaked Meta token is
+  useless without the app secret. Turn on "Require App Secret" in the Meta app.
 - `/privacy` is a draft notice. Items in [brackets] need Lawgistics' details
   and a review by counsel before launch.
 - Social tokens are stored encrypted and are never readable from the browser.
@@ -206,6 +211,9 @@ select vault.create_secret('<CRON_SECRET>', 'junior_cron_secret');
 and run the dev server with `npx next dev -H 0.0.0.0`.
 
 ## Tests
+
+GitHub Actions (`.github/workflows/junior.yml`) runs lint, types, unit tests,
+a build and the database tests on every push that touches `junior/`.
 
 ```bash
 npm test                    # 59 unit tests: privacy scan, house rules, time zones, encryption,

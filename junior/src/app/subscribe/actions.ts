@@ -8,11 +8,12 @@ import { fromAddress, resendConfigured, sendOne } from "@/lib/newsletter/resend"
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export interface SignupState {
-  done?: "check_email" | "already";
+  done?: "check_email";
   error?: string;
 }
 
 const Token = z.string().regex(/^[0-9a-f]{48}$/);
+const SIGNUPS_PER_HOUR = 30;
 
 // Public sign-up. Nobody is subscribed until they click the link in the
 // confirmation email, so nobody can sign someone else up.
@@ -40,8 +41,22 @@ export async function signUp(_prev: SignupState, formData: FormData): Promise<Si
     .eq("user_id", owner.id)
     .eq("email", email) // stored lower-case
     .maybeSingle();
-  if (existing?.status === "subscribed") return { done: "already" };
+  // Same answer whatever the address's status, so the page cannot be used to
+  // find out who subscribes to which firm.
+  if (existing?.status === "subscribed") return { done: "check_email" };
   if (existing?.status === "pending" && Date.now() - new Date(existing.updated_at).getTime() < 120_000) {
+    return { done: "check_email" };
+  }
+  // Each sign-up sends an email from our domain. Cap them per firm so the page
+  // cannot be used to flood other people's inboxes.
+  const { count: recent } = await admin
+    .from("subscribers")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", owner.id)
+    .eq("status", "pending")
+    .gte("updated_at", new Date(Date.now() - 3600_000).toISOString());
+  if ((recent ?? 0) >= SIGNUPS_PER_HOUR) {
+    console.warn(`Sign-up limit reached for ${slug}`);
     return { done: "check_email" };
   }
 

@@ -1,0 +1,47 @@
+name: Junior
+
+on:
+  push:
+    paths: ["junior/**", ".github/workflows/junior.yml"]
+  pull_request:
+    paths: ["junior/**", ".github/workflows/junior.yml"]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: junior
+
+jobs:
+  app:
+    name: Lint, types, unit tests, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: junior/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npx next typegen && npm run typecheck
+      - run: npm test
+      - run: npm run build
+        env:
+          # Placeholders: the build reads these but makes no calls.
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+
+  database:
+    name: Database rules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase start -x realtime,imgproxy,studio,edge-runtime,logflare,vector,supavisor,postgres-meta
+      - run: supabase test db

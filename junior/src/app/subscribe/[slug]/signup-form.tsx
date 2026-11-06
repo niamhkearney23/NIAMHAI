@@ -9,9 +9,13 @@ export function SignupForm({ slug, firm }: { slug: string; firm: string }) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   if (state.done === "check_email") {
-    return <Notice tone="accent">Check your email. Click the link inside to confirm, and you are subscribed.</Notice>;
+    return (
+      <Notice tone="accent">
+        Check your email. If you are not subscribed yet, click the link inside to confirm. If you already are, there is
+        nothing more to do.
+      </Notice>
+    );
   }
-  if (state.done === "already") return <Notice tone="accent">You are already subscribed. Thank you.</Notice>;
   return (
     <form action={action} className="space-y-4">
       <input type="hidden" name="slug" value={slug} />

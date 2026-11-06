@@ -7,7 +7,7 @@ import { requireProfile } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, rangeBounds, zonedDateKey } from "@/lib/time";
 import type { Channel } from "@/lib/types";
-import { refreshNow, useAutomaticResults } from "./actions";
+import { refreshNow, switchToAutomaticResults } from "./actions";
 import { RowActions } from "./row-actions";
 
 export const metadata: Metadata = { title: "Results" };
@@ -221,7 +221,7 @@ export default async function ResultsPage({ searchParams }: PageProps<"/results"
                             </span>
                           ) : null}
                           {res?.source === "manual" ? (
-                            <form action={useAutomaticResults} className="inline">
+                            <form action={switchToAutomaticResults} className="inline">
                               <input type="hidden" name="post_id" value={r.id} />
                               <span className="block text-xs text-muted">
                                 Numbers entered by you.{" "}

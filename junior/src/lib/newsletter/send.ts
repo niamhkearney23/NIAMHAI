@@ -53,13 +53,15 @@ export async function sendNewsletter(
   const brand = profile.brand_cover ? { cover: profile.brand_cover, card: profile.brand_card, accent: profile.brand_accent } : DEFAULT_BRAND;
   const from = fromAddress(profile.newsletter_from_name || profile.firm);
   const rows = (queued ?? []).filter((r) => r.subscriber_id && tokens.has(r.subscriber_id));
+  // A subject is one line. Anything else could be read as extra mail headers.
+  const subject = post.title.replace(/[\r\n]+/g, " ").trim().slice(0, 200) || profile.firm;
 
   for (let i = 0; i < rows.length; i += BATCH) {
     const chunk = rows.slice(i, i + BATCH);
     const emails = chunk.map((r) => {
       const token = tokens.get(r.subscriber_id!)!;
       const { html, text } = renderNewsletter({
-        subject: post.title,
+        subject,
         body: post.body,
         firm: profile.firm,
         footer: profile.newsletter_footer,
@@ -69,7 +71,7 @@ export async function sendNewsletter(
       return {
         from,
         to: [r.email],
-        subject: post.title,
+        subject,
         html,
         text,
         reply_to: profile.newsletter_reply_to || undefined,
