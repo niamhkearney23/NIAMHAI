@@ -125,6 +125,30 @@ NRIC numbers. Emojis, dashes and spelling have a "Fix it for me" button.
 - **Resend webhooks** (`/api/webhooks/resend`, Svix signatures checked) record
   deliveries, opens and clicks. Bounces and spam complaints stop future sends.
 
+### Free sample (`/try`)
+
+Someone with no account pastes an extract, picks Malaysia or Singapore and gives
+an email address. Junior writes one LinkedIn post, with the same facts, style
+and publicity rules and the same two layers of checks as a full draft.
+
+- **Nothing is written until the link in the email is opened and a button is
+  pressed**, so nobody can spend Junior's money, or fill someone else's inbox,
+  by typing in an address. The button (not the link) starts the draft because
+  email scanners open links.
+- **One per person.** `email_key` folds `+tags` and Gmail dots together. A second
+  request gets the same on-screen answer, and an email saying the sample is used.
+- **Personal details are stripped first**, with the usual defaults (IC numbers,
+  phone numbers, emails, likely names), before anything is stored or sent to
+  Claude. The pasted text is deleted once the draft is written. The draft is
+  kept 30 days. Unfinished requests go after 3 days. The email is kept 90 days
+  unless the person agreed to hear from Junior (`purge_samples`, nightly).
+- **Spend brakes:** `JUNIOR_SAMPLES_PER_DAY` (default 30, counted over 24 hours),
+  5 requests per network per hour, 100 in total per hour, a hidden honeypot
+  field, and `JUNIOR_SAMPLES=off` to close it. Everything sits behind
+  `sample_requests`, which only the server can touch (no policies).
+- A run that dies part-way can be retaken after 6 minutes, three tries at most.
+  `claim_sample` lets exactly one request win, so a double click writes one draft.
+
 ### Carousel builder
 
 Settings has three colours (first card, other cards, accent) with a live
@@ -254,7 +278,10 @@ npm run lint && npm run typecheck
    live URL). The migrations already schedule publishing (every minute) and
    results (hourly). On Vercel Pro you can use Vercel Cron on
    `/api/cron/publish` and `/api/cron/results` instead.
-9. **Resend:** verify the sending domain, set `RESEND_API_KEY` and
+9. **Resend:** verify a sending subdomain (for example `mail.lawgistics.my`, so
+   the main domain's own email is left alone). Junior sends everything from it:
+   sign-in emails if you use Resend for auth SMTP, newsletters, and the free
+   sample's link and draft. Set `RESEND_API_KEY` and
    `NEWSLETTER_FROM_DOMAIN`, and add a webhook to
    `https://<app>/api/webhooks/resend` for `email.delivered`, `email.opened`,
    `email.clicked`, `email.bounced` and `email.complained`, with its secret in

@@ -52,6 +52,32 @@ For each draft, return 4 to 6 checks. Each check has an item (what you checked, 
 
 Also give the brief a neutral title of at most 8 words, with no client names, for the lawyer's queue.`;
 
+/** One tagged section of the main prompt, so the sample prompt reuses the same rules word for word. */
+function section(tag: string): string {
+  const match = SYSTEM_PROMPT.match(new RegExp(`<${tag}>[\\s\\S]*?</${tag}>`));
+  if (!match) throw new Error(`Prompt section <${tag}> is missing`);
+  return match[0];
+}
+
+const LINKEDIN_BRIEF = section("channels")
+  .split("\n")
+  .find((line) => line.startsWith("LinkedIn post:"));
+if (!LINKEDIN_BRIEF) throw new Error("The LinkedIn brief is missing from the prompt");
+
+// The free sample: one LinkedIn post, same facts, style and publicity rules.
+export const SAMPLE_SYSTEM_PROMPT = [
+  `You are Junior, the drafting assistant in Lawgistics' marketing app for lawyers in Malaysia and Singapore. Someone who has not signed up yet is trying Junior once. They give you source material: part of a judgment or rough notes. You turn it into one draft, a LinkedIn post, that they will review and edit before using it anywhere. Nothing is published for them.
+
+The lawyer is responsible for what goes out, and lawyers in both countries are bound by professional publicity rules. Write a draft that is safe to approve with light edits.`,
+  section("facts"),
+  section("style"),
+  section("publicity_guardrails"),
+  `<channels>\n${LINKEDIN_BRIEF}\n</channels>`,
+  `<general_information_line>\nEnd the LinkedIn post with this sentence as its own final paragraph:\n${GENERAL_INFO_LINE}\n</general_information_line>`,
+  section("checks"),
+  "Also give the brief a neutral title of at most 8 words, with no client names.",
+].join("\n\n");
+
 const SOURCE_KIND_LABEL: Record<SourceKind, string> = {
   text: "pasted text",
   pdf: "document",
@@ -88,4 +114,12 @@ ${escapeTags(text.trim())}
 </source>
 
 Write the four drafts from this source.`;
+}
+
+export function sampleSourceMessage(text: string): string {
+  return `<source kind="${SOURCE_KIND_LABEL.text}">
+${escapeTags(text.trim())}
+</source>
+
+Write the LinkedIn post from this source.`;
 }

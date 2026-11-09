@@ -15,6 +15,11 @@ export function fromAddress(name: string): string {
   return `${clean} <newsletter@${process.env.NEWSLETTER_FROM_DOMAIN}>`;
 }
 
+/** Junior's own mail (sample links and drafts): "Junior by Lawgistics <hello@mail.example.com>". */
+export function juniorFrom(): string {
+  return `Junior by Lawgistics <hello@${process.env.NEWSLETTER_FROM_DOMAIN}>`;
+}
+
 export interface OutgoingEmail {
   from: string;
   to: string[];

@@ -43,6 +43,9 @@ export default async function Home() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/login">Get started</ButtonLink>
+              <ButtonLink href="/try" variant="secondary">
+                Try one free draft
+              </ButtonLink>
             </div>
           </div>
           <Mascot size={180} className="justify-self-center" />

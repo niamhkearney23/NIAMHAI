@@ -12,7 +12,7 @@ export interface NewPost {
   rule_checks: Check[];
 }
 
-function keyed(checks: JuniorCheck[]): Check[] {
+export function keyed(checks: JuniorCheck[]): Check[] {
   return checks.map((c, i) => ({ key: `junior:${i}`, item: c.item.trim(), pass: c.pass, note: c.note.trim() }));
 }
 

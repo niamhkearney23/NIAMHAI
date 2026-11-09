@@ -1,6 +1,7 @@
 import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
+import type { z } from "zod";
 import { anthropicApiKey, anthropicBaseUrl, anthropicConfigured, demoDraftsEnabled } from "@/lib/env";
 import type { Profile, SourceKind } from "@/lib/types";
 import { demoDrafts } from "./demo";
@@ -17,30 +18,30 @@ export class DraftError extends Error {}
 // plain format and validate the reply ourselves, after checking why Claude
 // stopped: the SDK's auto-parse would throw on a refusal before we could tell
 // the lawyer what happened.
-const { type: formatType, schema: formatSchema } = betaZodOutputFormat(DraftSetSchema);
-const OUTPUT_FORMAT = { type: formatType, schema: formatSchema };
-
-function parseDrafts(text: string): DraftSet | null {
-  try {
-    const result = DraftSetSchema.safeParse(JSON.parse(text));
-    if (!result.success) console.error("Drafts failed validation", result.error.issues.slice(0, 5));
-    return result.success ? result.data : null;
-  } catch {
-    return null;
-  }
+export function outputFormat(schema: z.ZodType) {
+  const { type, schema: jsonSchema } = betaZodOutputFormat(schema);
+  return { type, schema: jsonSchema };
 }
 
-export interface DraftResult {
-  drafts: DraftSet;
+const OUTPUT_FORMAT = outputFormat(DraftSetSchema);
+
+export interface Generated<T> {
+  value: T;
   draftedWith: string;
 }
 
-export async function draftPosts(profile: Profile, kind: SourceKind, source: string): Promise<DraftResult> {
-  if (!anthropicConfigured()) {
-    if (demoDraftsEnabled()) return { drafts: demoDrafts(profile, source), draftedWith: "demo" };
-    throw new DraftError("Drafting is not set up yet. Add an Anthropic API key to the server settings.");
-  }
-
+/**
+ * One structured call to Claude, with every failure turned into a message the
+ * reader can act on. Used for the full draft set and for the free sample.
+ */
+export async function generate<T>(options: {
+  system: string;
+  lawyer: string;
+  user: string;
+  schema: z.ZodType<T>;
+  format: ReturnType<typeof outputFormat>;
+  maxTokens: number;
+}): Promise<Generated<T>> {
   // Explicit key and URL: never pick up credentials or a base URL meant for
   // another tool from the environment.
   const client = new Anthropic({ apiKey: anthropicApiKey(), authToken: null, baseURL: anthropicBaseUrl() });
@@ -48,16 +49,16 @@ export async function draftPosts(profile: Profile, kind: SourceKind, source: str
   try {
     const stream = client.beta.messages.stream({
       model: MODEL,
-      max_tokens: 32000,
+      max_tokens: options.maxTokens,
       // If a safety classifier declines, retry on Anthropic's recommended fallback model.
       betas: ["server-side-fallback-2026-07-01"],
       fallbacks: "default",
-      output_config: { effort: EFFORT, format: OUTPUT_FORMAT },
+      output_config: { effort: EFFORT, format: options.format },
       system: [
-        { type: "text", text: SYSTEM_PROMPT },
-        { type: "text", text: lawyerContext(profile), cache_control: { type: "ephemeral" } },
+        { type: "text", text: options.system },
+        { type: "text", text: options.lawyer, cache_control: { type: "ephemeral" } },
       ],
-      messages: [{ role: "user", content: sourceMessage(kind, source) }],
+      messages: [{ role: "user", content: options.user }],
     });
 
     const message = await stream.finalMessage();
@@ -69,11 +70,18 @@ export async function draftPosts(profile: Profile, kind: SourceKind, source: str
       throw new DraftError("Junior ran out of room. Try a shorter source.");
     }
     const text = message.content.map((block) => (block.type === "text" ? block.text : "")).join("");
-    const drafts = parseDrafts(text);
-    if (!drafts) {
+    let value: T | null = null;
+    try {
+      const result = options.schema.safeParse(JSON.parse(text));
+      if (!result.success) console.error("Drafts failed validation", result.error.issues.slice(0, 5));
+      else value = result.data;
+    } catch {
+      value = null;
+    }
+    if (value === null) {
       throw new DraftError("Junior's drafts came back in the wrong shape. Please try again.");
     }
-    return { drafts, draftedWith: message.model };
+    return { value, draftedWith: message.model };
   } catch (error) {
     if (error instanceof DraftError) throw error;
     if (error instanceof Anthropic.AuthenticationError || error instanceof Anthropic.PermissionDeniedError) {
@@ -96,4 +104,26 @@ export async function draftPosts(profile: Profile, kind: SourceKind, source: str
     console.error("Drafting failed", error);
     throw new DraftError("Junior's drafts came back in the wrong shape. Please try again.");
   }
+}
+
+export interface DraftResult {
+  drafts: DraftSet;
+  draftedWith: string;
+}
+
+export async function draftPosts(profile: Profile, kind: SourceKind, source: string): Promise<DraftResult> {
+  if (!anthropicConfigured()) {
+    if (demoDraftsEnabled()) return { drafts: demoDrafts(profile, source), draftedWith: "demo" };
+    throw new DraftError("Drafting is not set up yet. Add an Anthropic API key to the server settings.");
+  }
+
+  const { value, draftedWith } = await generate({
+    system: SYSTEM_PROMPT,
+    lawyer: lawyerContext(profile),
+    user: sourceMessage(kind, source),
+    schema: DraftSetSchema,
+    format: OUTPUT_FORMAT,
+    maxTokens: 32000,
+  });
+  return { drafts: value, draftedWith };
 }

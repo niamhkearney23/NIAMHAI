@@ -54,6 +54,17 @@ export default function PrivacyPage() {
           </p>
         </section>
         <section>
+          <h2>Free samples</h2>
+          <p>
+            If you try Junior without an account, we use your email address to send you a link, and the text you paste to write
+            one draft. Before anything is stored or sent to Claude, Junior removes identity numbers, phone numbers, email
+            addresses and likely names from that text. We delete the text as soon as the draft is written, and keep the draft
+            for 30 days. We keep your email address for 90 days to make sure each person gets one free draft, and for longer
+            only if you tick the box to hear from us about Junior, which you can withdraw at any time. A sample draft is
+            emailed to you, so it also passes through our email provider.
+          </p>
+        </section>
+        <section>
           <h2>Who processes it</h2>
           <ul>
             <li>Supabase, which hosts our database, sign-in and file storage, in [region].</li>
