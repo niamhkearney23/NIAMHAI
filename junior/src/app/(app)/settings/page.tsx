@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { BrandForm } from "@/components/brand-form";
 import { ConnectionsPanel } from "@/components/connections-panel";
+import { InboundPanel, type InboundRow } from "@/components/inbound-panel";
 import { ProfileForm } from "@/components/profile/profile-form";
 import { ButtonLink, PageHeader, Panel } from "@/components/ui";
 import { listConnections } from "@/lib/connections";
 import { CHANNEL_LABEL } from "@/lib/channels";
-import { brandOf, requireProfile } from "@/lib/dal";
+import { brandOf, requireProfile, requireUser } from "@/lib/dal";
+import { inboundAddress } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { formatDateTime } from "@/lib/time";
 import type { ApprovalLogEntry } from "@/lib/types";
@@ -46,6 +48,15 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
   const one = (v: string | string[] | undefined) => (typeof v === "string" ? v : undefined);
   const connections = await listConnections();
   const supabase = await createClient();
+  const address = inboundAddress();
+  const user = address ? await requireUser() : null;
+  const { data: inbound } = address
+    ? await supabase
+        .from("inbound_messages")
+        .select("id, status, reason, brief_id, redactions, received_at")
+        .order("received_at", { ascending: false })
+        .limit(8)
+    : { data: null };
   const { data: log } = await supabase
     .from("approval_log")
     .select("id, post_id, actor_email, action, channel, content_hash, detail, created_at")
@@ -78,6 +89,15 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
           </div>
         ) : null}
       </section>
+
+      {address && user ? (
+        <section id="email" aria-labelledby="email-heading" className="max-w-2xl scroll-mt-8 space-y-4">
+          <h2 id="email-heading" className="font-serif text-2xl text-ink">
+            Email Junior
+          </h2>
+          <InboundPanel address={address} signInEmail={user.email ?? ""} rows={(inbound ?? []) as InboundRow[]} timezone={profile.timezone} />
+        </section>
+      ) : null}
 
       <section aria-labelledby="newsletter-heading" className="max-w-2xl space-y-3">
         <h2 id="newsletter-heading" className="font-serif text-2xl text-ink">

@@ -26,6 +26,7 @@ function state() {
     posts: [],
     emails: [],
     idempotency: new Map(),
+    inbound: new Map(),
     failNext: null,
     seq: 1,
   };
@@ -138,6 +139,90 @@ export function startMockPlatforms({ port = 4010, host = "127.0.0.1" } = {}) {
         }
         return false;
       };
+
+      // ---- Resend: received email (inbound)
+      // Seed one with POST /__mock/inbound {from, to, subject, text, html, headers, authentication,
+      // attachments: [{filename, content_type, base64}]}. Then send the app a signed email.received
+      // webhook for the id, and it fetches the rest from here, as it would from Resend.
+      if (path === "/__mock/inbound" && req.method === "POST") {
+        const id = body.id ?? randomUUID();
+        const attachments = (body.attachments ?? []).map((a) => ({
+          id: randomUUID(),
+          filename: a.filename,
+          content_type: a.content_type,
+          content_disposition: "attachment",
+          bytes: Buffer.from(a.base64 ?? "", "base64"),
+        }));
+        s.inbound.set(id, {
+          id,
+          from: body.from,
+          to: body.to ?? [],
+          subject: body.subject ?? "",
+          text: body.text ?? null,
+          html: body.html ?? null,
+          headers: { from: body.from, ...(body.headers ?? {}) },
+          authentication: body.authentication === undefined ? { spf: "pass", dkim: "pass", dmarc: "pass" } : body.authentication,
+          attachments,
+        });
+        return json(res, 200, { id, attachments: attachments.map((a) => a.id) });
+      }
+      const received = path.match(/^\/emails\/receiving\/([^/]+)(\/attachments)?$/);
+      if (received && req.method === "GET") {
+        if (!String(req.headers.authorization ?? "").startsWith("Bearer re_")) return json(res, 401, { message: "API key is invalid", name: "validation_error" });
+        if (failIf("resend")) return;
+        const mail = s.inbound.get(decodeURIComponent(received[1]));
+        if (!mail) return json(res, 404, { message: "Email not found", name: "not_found" });
+        if (received[2]) {
+          return json(res, 200, {
+            object: "list",
+            has_more: false,
+            data: mail.attachments.map((a) => ({
+              id: a.id,
+              filename: a.filename,
+              size: a.bytes.length,
+              content_type: a.content_type,
+              content_disposition: a.content_disposition,
+              content_id: null,
+              download_url: `${base()}/__mock/inbound-files/${mail.id}/${a.id}`,
+              expires_at: new Date(Date.now() + 3600_000).toISOString(),
+            })),
+          });
+        }
+        return json(res, 200, {
+          object: "email",
+          id: mail.id,
+          to: mail.to,
+          from: String(mail.from).replace(/^.*<([^>]+)>.*$/, "$1"),
+          created_at: new Date().toISOString(),
+          subject: mail.subject,
+          html: mail.html,
+          html_format: "cid",
+          text: mail.text,
+          headers: mail.headers,
+          bcc: [],
+          cc: [],
+          reply_to: [],
+          received_for: [],
+          authentication: mail.authentication,
+          message_id: `<${mail.id}@mock>`,
+          raw: null,
+          attachments: mail.attachments.map((a) => ({
+            id: a.id,
+            filename: a.filename,
+            content_type: a.content_type,
+            content_disposition: a.content_disposition,
+            content_id: null,
+            size: a.bytes.length,
+          })),
+        });
+      }
+      const file = path.match(/^\/__mock\/inbound-files\/([^/]+)\/([^/]+)$/);
+      if (file) {
+        const att = s.inbound.get(file[1])?.attachments.find((a) => a.id === file[2]);
+        if (!att) return json(res, 404, { message: "Not found" });
+        res.writeHead(200, { "content-type": att.content_type, "content-length": att.bytes.length });
+        return res.end(att.bytes);
+      }
 
       // ---- Resend
       if ((path === "/emails" || path === "/emails/batch") && req.method === "POST") {

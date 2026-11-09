@@ -48,3 +48,13 @@ export function demoDraftsEnabled(): boolean {
 export function transcriptionConfigured(): boolean {
   return Boolean(process.env.OPENAI_API_KEY);
 }
+
+/**
+ * The address lawyers forward judgments to, for example post@mail.lawgistics.my.
+ * Unset means the feature is off. It must be on a domain with receiving turned
+ * on in Resend.
+ */
+export function inboundAddress(): string | null {
+  const address = process.env.JUNIOR_INBOUND_ADDRESS?.trim().toLowerCase();
+  return address && address.includes("@") ? address : null;
+}

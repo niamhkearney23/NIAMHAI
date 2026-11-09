@@ -1,9 +1,18 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { after, NextResponse, type NextRequest } from "next/server";
+import { inboundAddress } from "@/lib/env";
+import { bareAddress } from "@/lib/inbound/email-text";
+import { runInbound } from "@/lib/inbound/process";
 import { verifyWebhook } from "@/lib/newsletter/webhook";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 // Delivery, opens, clicks, bounces and spam complaints from Resend.
 // Bounces and complaints stop future sends to that person.
+//
+// email.received: a lawyer has emailed Junior. Only queue it here (Resend wants
+// a quick answer), then draft after the response has gone, so a slow Claude call
+// cannot make Resend retry. A cron wake-up picks up anything that did not finish.
+export const maxDuration = 300;
+
 export async function POST(request: NextRequest) {
   const secret = process.env.RESEND_WEBHOOK_SECRET;
   const body = await request.text();
@@ -16,7 +25,11 @@ export async function POST(request: NextRequest) {
     );
   if (!ok) return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
 
-  const event = JSON.parse(body) as { type: string; created_at?: string; data?: { email_id?: string } };
+  const event = JSON.parse(body) as {
+    type: string;
+    created_at?: string;
+    data?: { email_id?: string; from?: string; to?: string[] };
+  };
   const emailId = event.data?.email_id;
   if (!emailId) return NextResponse.json({ ok: true });
   const at = event.created_at ?? new Date().toISOString();
@@ -33,6 +46,29 @@ export async function POST(request: NextRequest) {
     case "email.clicked":
       await sends.update({ clicked_at: at }).eq("resend_id", emailId).is("clicked_at", null);
       break;
+    case "email.received": {
+      const address = inboundAddress();
+      const to = (event.data?.to ?? []).map(bareAddress);
+      const sender = bareAddress(event.data?.from ?? "");
+      if (!address || !to.includes(address) || !sender.includes("@")) break;
+      const { data: userId } = await admin.rpc("sender_to_user", { p_email: sender });
+      const { error } = await admin.from("inbound_messages").upsert(
+        {
+          resend_email_id: emailId,
+          sender,
+          user_id: userId ?? null,
+          status: userId ? "received" : "rejected",
+          reason: userId ? null : "Sender is not a Junior user.",
+        },
+        { onConflict: "resend_email_id", ignoreDuplicates: true },
+      );
+      if (error) {
+        console.error("Could not queue an inbound email", error);
+        return NextResponse.json({ error: "Could not queue" }, { status: 500 }); // Resend tries again
+      }
+      if (userId) after(() => runInbound({ resendEmailId: emailId }));
+      break;
+    }
     case "email.bounced":
     case "email.complained": {
       const status = event.type === "email.bounced" ? "bounced" : "complained";

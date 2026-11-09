@@ -11,8 +11,18 @@ import { DraftSetSchema, type DraftSet } from "./schema";
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-5-5";
 const EFFORT = (process.env.ANTHROPIC_EFFORT || "medium") as "low" | "medium" | "high" | "xhigh" | "max";
 
-/** A failure the lawyer can act on. The message is shown as is. */
-export class DraftError extends Error {}
+/**
+ * A failure the lawyer can act on. The message is shown as is. `retryable` means
+ * trying again later may well work (Claude was busy), for work that runs unattended.
+ */
+export class DraftError extends Error {
+  constructor(
+    message: string,
+    readonly retryable = false,
+  ) {
+    super(message);
+  }
+}
 
 // The SDK builds a strict JSON schema from the Zod schema. We send it as a
 // plain format and validate the reply ourselves, after checking why Claude
@@ -79,7 +89,7 @@ export async function generate<T>(options: {
       value = null;
     }
     if (value === null) {
-      throw new DraftError("Junior's drafts came back in the wrong shape. Please try again.");
+      throw new DraftError("Junior's drafts came back in the wrong shape. Please try again.", true);
     }
     return { value, draftedWith: message.model };
   } catch (error) {
@@ -88,18 +98,18 @@ export async function generate<T>(options: {
       throw new DraftError("Junior's Anthropic API key was rejected. Check the server settings.");
     }
     if (error instanceof Anthropic.RateLimitError) {
-      throw new DraftError("Junior is handling a lot right now. Try again in a minute.");
+      throw new DraftError("Junior is handling a lot right now. Try again in a minute.", true);
     }
     if (error instanceof Anthropic.BadRequestError) {
       console.error("Anthropic rejected the drafting request", error.message);
       throw new DraftError("Junior could not read this source. Try a shorter extract.");
     }
     if (error instanceof Anthropic.APIConnectionError) {
-      throw new DraftError("Junior could not reach Claude. Check the connection and try again.");
+      throw new DraftError("Junior could not reach Claude. Check the connection and try again.", true);
     }
     if (error instanceof Anthropic.APIError) {
       console.error("Anthropic error", error.status, error.message);
-      throw new DraftError("Claude is busy at the moment. Try again shortly.");
+      throw new DraftError("Claude is busy at the moment. Try again shortly.", true);
     }
     console.error("Drafting failed", error);
     throw new DraftError("Junior's drafts came back in the wrong shape. Please try again.");

@@ -54,6 +54,17 @@ export default function PrivacyPage() {
           </p>
         </section>
         <section>
+          <h2>Emailing Junior</h2>
+          <p>
+            If you forward a judgment to Junior by email, Junior reads the email text or its PDF attachment, removes identity
+            numbers, phone numbers, email addresses and likely names, and drafts from what is left. We keep the extracted
+            text as a brief, and a log of when each email arrived and what happened to it, but not the email itself. Our
+            email provider keeps received email under its own terms, so avoid forwarding anything you are not allowed to
+            share. Emails from anyone who is not a Junior user are not used, and we keep a record of the sender&apos;s
+            address for 7 days to spot abuse.
+          </p>
+        </section>
+        <section>
           <h2>Free samples</h2>
           <p>
             If you try Junior without an account, we use your email address to send you a link, and the text you paste to write

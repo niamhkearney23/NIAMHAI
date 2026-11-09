@@ -149,6 +149,33 @@ and publicity rules and the same two layers of checks as a full draft.
 - A run that dies part-way can be retaken after 6 minutes, three tries at most.
   `claim_sample` lets exactly one request win, so a double click writes one draft.
 
+### Inbound email (`post@`)
+
+A lawyer forwards a judgment, or attaches it as a PDF, to Junior's address. Junior
+drafts all four posts and puts them in To review, and emails the lawyer a link.
+Nothing is approved or posted. Off until `JUNIOR_INBOUND_ADDRESS` is set.
+
+- **Who it accepts.** The sender must be a signed-in lawyer's address, **and**
+  Resend's own receiving checks must pass (DKIM, or DMARC). Resend computes
+  these on arrival, so a sender cannot forge them. SPF alone is not enough: it
+  says nothing about the From address. A forged or unsigned message is refused,
+  and the lawyer is told at most once a day.
+- **Never answered:** strangers, out-of-office replies, mailing lists, and
+  Junior's own address. Strangers are recorded for a week to spot abuse.
+- **How it runs.** The webhook only queues (`inbound_messages`, one row per
+  Resend email id, so a retried webhook changes nothing) and answers quickly. The
+  work happens after the response, and a cron wake-up picks up anything that did
+  not finish. `claim_inbound` lets one run take each message. A busy Claude or a
+  failed fetch is retried with a growing delay, four tries at most.
+- **What it reads.** The first PDFs (up to three, 25 MB each), otherwise the
+  email body, with the forward banner, quote arrows, signature and "Sent from my
+  iPhone" removed. Scanned PDFs cannot be read, and the lawyer is told.
+- **What it keeps.** Not the email. Resend keeps received mail; Junior keeps
+  only the extracted text as a brief, after names, IC numbers, phone numbers and
+  emails are stripped (there is nobody to ask, so the defaults apply). The log in
+  Settings shows when, the result and a link, never a subject or a body.
+- **Limits.** 20 drafted emails per lawyer in 24 hours.
+
 ### Carousel builder
 
 Settings has three colours (first card, other cards, accent) with a live
@@ -287,6 +314,14 @@ npm run lint && npm run typecheck
    `email.clicked`, `email.bounced` and `email.complained`, with its secret in
    `RESEND_WEBHOOK_SECRET`. Turn on open and click tracking for the domain if
    you want those numbers.
+10. **Inbound email:** in Resend, on the sending subdomain (for example
+    `mail.lawgistics.my`), turn on Receiving and add the MX record it shows. Keep
+    your main domain's own MX records untouched: Resend's record must be the
+    lowest priority on the name it is added to, so use the subdomain. Add the
+    `email.received` event to the webhook from step 9, and set
+    `JUNIOR_INBOUND_ADDRESS` (for example `post@mail.lawgistics.my`). Check it
+    by forwarding a PDF from the address you sign in with. Resend's
+    `<id>.resend.app` address works for a first test before DNS is done.
 
 ## Layout
 
