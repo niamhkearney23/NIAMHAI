@@ -23,6 +23,25 @@ near-black/charcoal with one signal-orange accent.
 - `src/lib/stack.ts` — content for the "things I'm actually using" section
 - `src/components/` — layout (header/footer), sections, and shared UI
   (copy-prompt, guide cards, callouts, etc.)
+- `src/lib/demos.ts` — the concept demos shown under "Work with me"
+- `public/demos/` — those demos as working static pages, plus their
+  preview clips (`public/demos/previews/`)
+
+## Concept demos
+
+Three small working demos (a law firm dashboard, a follow-up
+automation and a booking website) sit under "Work with me", each with
+a short silent preview that plays on hover, or while on screen on
+phones. They're concept demos with invented businesses and data, not
+client work; every page says so and is marked `noindex`.
+
+The pages are copied from `demos/` in
+[niamhkearney23/cloak](https://github.com/niamhkearney23/cloak), which
+also has the script that records them. To update one, change it there,
+then copy `demos/<name>/index.html` and `demos/profile.js` into
+`public/demos/`. The previews are cut from that script's recordings at
+2x speed, in WebM (VP9) and MP4 (H.264), with the first frame as the
+poster.
 
 ## Newsletter signup
 
